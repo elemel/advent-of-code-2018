@@ -34,7 +34,6 @@ def main():
             grid[x, y] = distance
             add_neighbors_to_queue(x, y, locations, queue)
 
-
     print(len(grid))
 
 
