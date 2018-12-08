@@ -1,58 +1,44 @@
-from collections import Counter, deque
-from sys import stderr, stdin
+from sys import maxint, stdin
+
+
+def manhattan_distance(x1, y1, x2, y2):
+    return abs(x2 - x1) + abs(y2 - y1)
 
 
 def main():
     locations = [tuple(int(s) for s in line.split(',')) for line in stdin]
 
-    x1 = min(x for (x, _) in locations)
-    y1 = min(y for (_, y) in locations)
-    x2 = max(x for (x, _) in locations)
-    y2 = max(y for (_, y) in locations)
+    min_x = min(x for x, _ in locations)
+    min_y = min(y for _, y in locations)
+    max_x = max(x for x, _ in locations)
+    max_y = max(y for _, y in locations)
 
-    inf = abs(x2 - x1) + abs(y2 - y1)
-    grid = {}
-    queue = deque((location, location, 0) for location in locations)
-    hull = set()
-    max_percentage = 0
+    sizes = len(locations) * [0]
+    infinite = len(locations) * [False]
 
-    while queue:
-        location, position, distance = queue.popleft()
-        percentage = 100 * distance // inf
+    for x1 in range(min_x, max_x + 1):
+        for y1 in range(min_y, max_y + 1):
+            closest_indices = []
+            min_distance = maxint
 
-        if percentage > max_percentage:
-            max_percentage = percentage
-            print('Progress: %s%%' % percentage, file=stderr)
+            for i, (x2, y2) in enumerate(locations):
+                distance = manhattan_distance(x1, y1, x2, y2)
 
-        if distance == inf:
-            hull.add(location)
-            continue
+                if distance < min_distance:
+                    del closest_indices[:]
+                    min_distance = distance
 
-        old_location, old_distance = grid.get(position, (None, inf))
+                if distance == min_distance:
+                    closest_indices.append(i)
 
-        if distance > old_distance:
-            continue
+            if len(closest_indices) == 1:
+                sizes[closest_indices[0]] += 1
 
-        if distance == old_distance:
-            if location != old_location:
-                grid[position] = None, distance
+            if x1 == min_x or x1 == max_x or y1 == min_y or y1 == max_y:
+                for i in closest_indices:
+                    infinite[i] = True
 
-            continue
-
-        grid[position] = location, distance
-        x, y = position
-        queue.append((location, (x - 1, y), distance + 1))
-        queue.append((location, (x + 1, y), distance + 1))
-        queue.append((location, (x, y - 1), distance + 1))
-        queue.append((location, (x, y + 1), distance + 1))
-
-    sizes = Counter(
-        location
-        for _, (location, _) in grid.items()
-        if location and location not in hull)
-
-    _, size = sizes.most_common(1)[0]
-    print(size)
+    print(max(size for i, size in enumerate(sizes) if not infinite[i]))
 
 
 if __name__ == '__main__':
