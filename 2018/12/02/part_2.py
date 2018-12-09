@@ -1,5 +1,5 @@
-import itertools
-import sys
+from itertools import combinations, starmap
+from sys import stdin
 
 
 def match(a, b):
@@ -7,16 +7,16 @@ def match(a, b):
 
 
 def solve(ids):
-    for a, b in itertools.combinations(ids, 2):
+    for a, b in combinations(ids, 2):
         if len(a) == len(b):
-            common = ''.join(itertools.starmap(match, zip(a, b)))
+            common = ''.join(starmap(match, zip(a, b)))
 
             if len(common) == len(a) - 1:
                 return common
 
 
 def main():
-    ids = [line.strip() for line in sys.stdin]
+    ids = [line.strip() for line in stdin]
     print(solve(ids))
 
 

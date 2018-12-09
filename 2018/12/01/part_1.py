@@ -1,8 +1,8 @@
-import sys
+from sys import stdin
 
 
 def main():
-    print(sum((int(line) for line in sys.stdin)))
+    print(sum((int(line) for line in stdin)))
 
 
 if __name__ == '__main__':

@@ -1,14 +1,14 @@
-import itertools
-import sys
+from itertools import groupby
+from sys import stdin
 
 
 def main():
     twos = 0
     threes = 0
 
-    for line in sys.stdin:
+    for line in stdin:
         id = line.strip()
-        groups = itertools.groupby(sorted(list(id)))
+        groups = groupby(sorted(list(id)))
         counts = [len(list(v)) for k, v in groups]
 
         if 2 in counts:

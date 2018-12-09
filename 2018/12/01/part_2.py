@@ -1,8 +1,8 @@
-import sys
+from sys import stdin
 
 
 def main():
-    sequence = [int(line) for line in sys.stdin]
+    sequence = [int(line) for line in stdin]
     current = 0
     seen = set([current])
     duplicate = None
