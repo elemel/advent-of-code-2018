@@ -8,19 +8,16 @@ def main():
     last_marble = int(words[-2])
 
     scores = player_count * [0]
-    player = 0
     circle = deque([0])
 
     for marble in range(1, last_marble + 1):
         if marble % 23 == 0:
-            scores[player] += marble
+            player = (marble - 1) % player_count
             circle.rotate(7)
-            scores[player] += circle.popleft()
+            scores[player] += marble + circle.popleft()
         else:
             circle.rotate(-2)
             circle.appendleft(marble)
-
-        player = (player + 1) % player_count
 
     print(max(scores))
 
