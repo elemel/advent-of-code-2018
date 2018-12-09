@@ -1,23 +1,20 @@
-from itertools import combinations, starmap
+from itertools import combinations
 from sys import stdin
-
-
-def match(a, b):
-    return a if a == b else ''
-
-
-def solve(ids):
-    for a, b in combinations(ids, 2):
-        if len(a) == len(b):
-            common = ''.join(starmap(match, zip(a, b)))
-
-            if len(common) == len(a) - 1:
-                return common
 
 
 def main():
     ids = [line.strip() for line in stdin]
-    print(solve(ids))
+
+    for id_1, id_2 in combinations(ids, 2):
+        if len(id_1) == len(id_2):
+            common = ''.join(
+                letter_1
+                for letter_1, letter_2 in zip(id_1, id_2)
+                if letter_1 == letter_2)
+
+            if len(common) == len(id_1) - 1:
+                print(common)
+                return
 
 
 if __name__ == '__main__':
