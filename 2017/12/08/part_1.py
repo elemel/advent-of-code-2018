@@ -4,9 +4,9 @@ from sys import stdin
 
 
 def main():
-    signs = dict(inc=1, dec=-1)
+    mod_ops = dict(inc=1, dec=-1)
 
-    operators = {
+    cond_ops = {
         '<': operator.lt,
         '<=': operator.le,
         '==': operator.eq,
@@ -15,15 +15,17 @@ def main():
         '>': operator.gt,
     }
 
-    registers = defaultdict(int)
+    regs = defaultdict(int)
 
     for line in stdin:
-        reg, inc_dec, amount, _, cond_reg, cond_op, cond_const = line.split()
+        mod, cond = line.split(' if ')
+        mod_reg, mod_op, mod_const = mod.split()
+        cond_reg, cond_op, cond_const = cond.split()
 
-        if operators[cond_op](registers[cond_reg], int(cond_const)):
-            registers[reg] += signs[inc_dec] * int(amount)
+        if cond_ops[cond_op](regs[cond_reg], int(cond_const)):
+            regs[mod_reg] += mod_ops[mod_op] * int(mod_const)
 
-    print(max(registers.values()))
+    print(max(regs.values()))
 
 
 if __name__ == '__main__':
