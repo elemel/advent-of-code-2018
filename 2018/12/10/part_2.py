@@ -21,28 +21,23 @@ def get_bounds(stars, t):
     return min_x, min_y, max_x, max_y
 
 
-def get_fitness(stars, t):
+def get_error(stars, t):
     min_x, min_y, max_x, max_y = get_bounds(stars, t)
-    return (max_x - min_x) * (max_y - min_y)
+    return (max_x - min_x) + (max_y - min_y)
 
 
 def main():
     stars = [parse_star(line) for line in stdin]
-    max_fitness = get_fitness(stars, 0)
-    min_fitness = max_fitness
-    message_t = 0
+    min_error = maxsize
 
-    for t in range(1, maxsize):
-        fitness = get_fitness(stars, t)
+    for t in range(0, maxsize):
+        error = get_error(stars, t)
 
-        if fitness > max_fitness:
-            break
+        if error > min_error:
+            print(t - 1)
+            return
 
-        if fitness < min_fitness:
-            min_fitness = fitness
-            message_t = t
-
-    print(message_t)
+        min_error = error
 
 
 if __name__ == '__main__':
