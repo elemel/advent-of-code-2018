@@ -2,8 +2,8 @@ from sys import stdin
 
 
 def get_cell_power(x, y, serial_number):
-    rack_id = x + 10
-    power_level = rack_id * y
+    rack_id = (x + 1) + 10
+    power_level = rack_id * (y + 1)
     power_level += serial_number
     power_level *= rack_id
     power_level //= 100
@@ -26,10 +26,10 @@ def main():
 
     _, chosen_x, chosen_y = max(
         (get_total_power(x, y, square_size, serial_number), x, y)
-        for x in range(1, grid_size + 1 - square_size + 1)
-        for y in range(1, grid_size + 1 - square_size + 1))
+        for x in range(grid_size - square_size + 1)
+        for y in range(grid_size - square_size + 1))
 
-    print('%s,%s' % (chosen_x, chosen_y))
+    print('%s,%s' % (chosen_x + 1, chosen_y + 1))
 
 
 if __name__ == '__main__':
