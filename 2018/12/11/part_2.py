@@ -2,8 +2,8 @@ from sys import stdin
 
 
 def get_cell_power(x, y, serial_number):
-    rack_id = x + 10
-    power_level = rack_id * y
+    rack_id = (x + 1) + 10
+    power_level = rack_id * (y + 1)
     power_level += serial_number
     power_level *= rack_id
     power_level //= 100
@@ -17,12 +17,13 @@ def main():
     grid_size = 300
 
     cell_powers = [
-        [get_cell_power(x + 1, y + 1, serial_number)
-        for x in range(grid_size)] for y in range(grid_size)
+        [get_cell_power(x, y, serial_number)
+        for x in range(grid_size)]
+        for y in range(grid_size)
     ]
 
     column_powers = [grid_size * [0] for _ in range(grid_size)]
-    chosen = (0, 0, 0, 0)
+    chosen = 0, 0, 0, 0
 
     for square_size in range(1, 301):
         for y in range(grid_size - square_size + 1):
@@ -31,13 +32,13 @@ def main():
 
             for x in range(grid_size - square_size + 1):
                 if x == 0:
-                    total_power = sum(
+                    square_power = sum(
                         column_powers[y][x] for x in range(square_size))
                 else:
-                    total_power -= column_powers[y][x - 1]
-                    total_power += column_powers[y][x + square_size - 1]
+                    square_power -= column_powers[y][x - 1]
+                    square_power += column_powers[y][x + square_size - 1]
 
-                chosen = max(chosen, (total_power, x, y, square_size))
+                chosen = max(chosen, (square_power, x, y, square_size))
 
     _, chosen_x, chosen_y, chosen_size = chosen
     print('%s,%s,%s' % (chosen_x + 1, chosen_y + 1, chosen_size))
