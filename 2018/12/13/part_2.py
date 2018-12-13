@@ -52,6 +52,7 @@ def main():
 
     while carts:
         tick, y, x, cart, track, turn = heappop(carts)
+
         squares[y][x] = track
         dx, dy = directions[cart]
 
