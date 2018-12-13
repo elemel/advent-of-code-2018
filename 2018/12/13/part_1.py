@@ -53,9 +53,6 @@ def main():
     while carts:
         tick, y, x, cart, track, turn = heappop(carts)
 
-        if squares[y][x] == 'X':
-            continue
-
         squares[y][x] = track
         dx, dy = directions[cart]
 
@@ -63,7 +60,6 @@ def main():
         y += dy
 
         if squares[y][x] in '<>^v':
-            squares[y][x] = 'X'
             print('%s,%s' % (x, y))
             return
 
