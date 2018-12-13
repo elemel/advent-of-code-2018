@@ -1,4 +1,4 @@
-from heapq import heappop, heappush
+from heapq import heapify, heappop, heappush
 from sys import stdin
 
 
@@ -64,7 +64,7 @@ def main():
                 if x2 == x and y2 == y:
                     squares[y][x] = track
                     carts.pop(i)
-                    carts.sort()
+                    heapify(carts)
                     break
 
             continue
