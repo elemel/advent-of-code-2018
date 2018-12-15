@@ -103,7 +103,7 @@ def main():
         round = 0
         turn = 0
 
-        while min(total_hit_points.values()):
+        while min(total_hit_points.values()) != 0:
             unit = units[turn]
 
             if unit.hit_points != 0:
