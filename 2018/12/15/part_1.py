@@ -24,31 +24,28 @@ def find_path(map, unit):
     parents = {}
 
     while open:
-        x1, y1 = open.popleft()
+        x, y = open.popleft()
 
         for dx, dy in directions:
-            x2 = x1 + dx
-            y2 = y1 + dy
-
-            if (x2, y2) in closed:
+            if (x + dx, y + dy) in closed:
                 continue
 
-            square = map[y2][x2]
+            square = map[y + dy][x + dx]
 
             if str(square) == target_str:
                 path = []
 
-                while (x1, y1) != (unit.x, unit.y):
-                    path.append((x1, y1))
-                    x1, y1 = parents[x1, y1]
+                while (x, y) != (unit.x, unit.y):
+                    path.append((x, y))
+                    x, y = parents[x, y]
 
                 return path
 
             if square == '.':
-                parents[x2, y2] = x1, y1
-                open.append((x2, y2))
+                parents[x + dx, y + dy] = x, y
+                open.append((x + dx, y + dy))
 
-            closed.add((x2, y2))
+            closed.add((x + dx, y + dy))
 
     return []
 
@@ -75,7 +72,7 @@ def find_target(map, unit):
 def main():
     map = [list(line.rstrip('\r\n')) for line in stdin]
     units = []
-    total_hit_points = dict(E=0, G=0)
+    unit_counts = dict(E=0, G=0)
 
     for y, row in enumerate(map):
         for x, square in enumerate(row):
@@ -83,15 +80,15 @@ def main():
                 unit = Unit(type=square, x=x, y=y, hit_points=200)
                 map[y][x] = unit
                 units.append(unit)
-                total_hit_points[square] += unit.hit_points
+                unit_counts[square] += 1
 
     round = 0
     turn = 0
 
-    while min(total_hit_points.values()) != 0:
+    while min(unit_counts.values()) > 0:
         unit = units[turn]
 
-        if unit.hit_points != 0:
+        if unit.hit_points > 0:
             path = find_path(map, unit)
 
             if path:
@@ -102,12 +99,11 @@ def main():
             target = find_target(map, unit)
 
             if target:
-                damage = min(3, target.hit_points)
-                target.hit_points -= damage
-                total_hit_points[target.type] -= damage
+                target.hit_points -= 3
 
-                if target.hit_points == 0:
+                if target.hit_points <= 0:
                     map[target.y][target.x] = '.'
+                    unit_counts[str(target)] -= 1
 
         turn += 1
 
@@ -121,7 +117,8 @@ def main():
             units.sort(key=key)
             turn = 0
 
-    print(round * max(total_hit_points.values()))
+    total_hit_points = sum(max(0, unit.hit_points) for unit in units)
+    print(round * total_hit_points)
 
 
 if __name__ == '__main__':

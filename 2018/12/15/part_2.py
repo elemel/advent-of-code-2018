@@ -6,11 +6,10 @@ directions = [(0, -1), (-1, 0), (1, 0), (0, 1)]
 
 
 class Unit:
-    def __init__(self, type, x, y, attack_power, hit_points):
+    def __init__(self, type, x, y, hit_points):
         self.type = type
         self.x = x
         self.y = y
-        self.attack_power = attack_power
         self.hit_points = hit_points
 
     def __str__(self):
@@ -25,31 +24,28 @@ def find_path(map, unit):
     parents = {}
 
     while open:
-        x1, y1 = open.popleft()
+        x, y = open.popleft()
 
         for dx, dy in directions:
-            x2 = x1 + dx
-            y2 = y1 + dy
-
-            if (x2, y2) in closed:
+            if (x + dx, y + dy) in closed:
                 continue
 
-            square = map[y2][x2]
+            square = map[y + dy][x + dx]
 
             if str(square) == target_str:
                 path = []
 
-                while (x1, y1) != (unit.x, unit.y):
-                    path.append((x1, y1))
-                    x1, y1 = parents[x1, y1]
+                while (x, y) != (unit.x, unit.y):
+                    path.append((x, y))
+                    x, y = parents[x, y]
 
                 return path
 
             if square == '.':
-                parents[x2, y2] = x1, y1
-                open.append((x2, y2))
+                parents[x + dx, y + dy] = x, y
+                open.append((x + dx, y + dy))
 
-            closed.add((x2, y2))
+            closed.add((x + dx, y + dy))
 
     return []
 
@@ -80,32 +76,30 @@ def main():
         map = [list(row) for row in original_map]
 
         units = []
-        total_hit_points = dict(E=0, G=0)
+        unit_counts = dict(E=0, G=0)
 
         for y, row in enumerate(map):
             for x, square in enumerate(row):
                 if square in 'EG':
-                    attack_power = elf_attack_power if square == 'E' else 3
-
                     unit = Unit(
                         type=square,
                         x=x,
                         y=y,
-                        attack_power=attack_power,
                         hit_points=200)
 
                     map[y][x] = unit
                     units.append(unit)
-                    total_hit_points[square] += unit.hit_points
+                    unit_counts[square] += 1
 
-        elf_count = sum(str(unit) == 'E' for unit in units)
+        original_elf_count = unit_counts['E']
+
         round = 0
         turn = 0
 
-        while min(total_hit_points.values()) != 0:
+        while unit_counts['E'] == original_elf_count and unit_counts['G'] > 0:
             unit = units[turn]
 
-            if unit.hit_points != 0:
+            if unit.hit_points > 0:
                 path = find_path(map, unit)
 
                 if path:
@@ -116,12 +110,12 @@ def main():
                 target = find_target(map, unit)
 
                 if target:
-                    damage = min(unit.attack_power, target.hit_points)
-                    target.hit_points -= damage
-                    total_hit_points[target.type] -= damage
+                    attack_power = elf_attack_power if str(unit) == 'E' else 3
+                    target.hit_points -= attack_power
 
-                    if target.hit_points == 0:
+                    if target.hit_points <= 0:
                         map[target.y][target.x] = '.'
+                        unit_counts[str(target)] -= 1
 
             turn += 1
 
@@ -135,8 +129,9 @@ def main():
                 units.sort(key=key)
                 turn = 0
 
-        if sum(str(unit) == 'E' for unit in units if unit.hit_points > 0) == elf_count:
-            print(round * max(total_hit_points.values()))
+        if unit_counts['E'] == original_elf_count:
+            total_hit_points = sum(max(0, unit.hit_points) for unit in units)
+            print(round * total_hit_points)
             return
 
 
