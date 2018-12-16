@@ -99,6 +99,7 @@ def behaves_like(sample, opcode_name):
 def main():
     lines = stdin.read().splitlines()
     lines.reverse()
+
     samples = []
 
     while lines and lines[-1].startswith('Before'):
