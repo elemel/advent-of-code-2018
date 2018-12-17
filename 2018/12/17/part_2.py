@@ -1,35 +1,25 @@
-from collections import defaultdict, deque
+from collections import deque
 from sys import stdin
 
 
 def parse_clay_vein(line):
-    for item in line.split(', '):
-        key, value = item.split('=')
-
-        if key == 'x':
-            min_x = min(int(s) for s in value.split('..'))
-            max_x = max(int(s) for s in value.split('..'))
-        else:
-            min_y = min(int(s) for s in value.split('..'))
-            max_y = max(int(s) for s in value.split('..'))
-
-    return min_x, min_y, max_x, max_y
+    x_str, y_str = sorted(line.split(', '))
+    xs = [int(s) for s in x_str[2:].split('..')]
+    ys = [int(s) for s in y_str[2:].split('..')]
+    return min(xs), min(ys), max(xs), max(ys)
 
 
 def print_map(map_, min_x, min_y, max_x, max_y):
     for y in range(min_y, max_y + 1):
-        print(''.join(map_.get((x, y), ' ') for x in range(min_x, max_x + 1)))
+        print(''.join(map_.get((x, y), '.') for x in range(min_x, max_x + 1)))
 
 
 def main():
-    def sand_factory():
-        return '.'
+    clay_veins = [parse_clay_vein(line) for line in stdin]
 
-    map_ = defaultdict(sand_factory)
+    map_ = {}
 
-    for line in stdin:
-        min_x, min_y, max_x, max_y = parse_clay_vein(line)
-
+    for min_x, min_y, max_x, max_y in clay_veins:
         for x in range(min_x, max_x + 1):
             for y in range(min_y, max_y + 1):
                 map_[x, y] = '#'
@@ -52,38 +42,43 @@ def main():
 
         closed.add((x, y))
 
-        square = map_[x, y]
+        square = map_.get((x, y), '.')
 
-        above = map_[x, y - 1]
-        left = map_[x - 1, y]
-        right = map_[x + 1, y]
-        below = map_[x, y + 1]
+        above = map_.get((x, y - 1), '.')
+        left = map_.get((x - 1, y), '.')
+        right = map_.get((x + 1, y), '.')
+        below = map_.get((x, y + 1), '.')
 
         if square == '.':
             if above in '+|' or left in '->' or right in '-<':
                 square = '|'
-        elif square == '|':
+
+        if square == '|':
             if below in '#~':
                 square = '-'
-        elif square == '-':
-            if below in '#~' and left in '#>':
+
+        if square == '-':
+            if left in '#>':
                 square = '>'
-            elif below in '#~' and right in '#<':
+            elif right in '#<':
                 square = '<'
-        elif square == '<':
+
+        if square == '<':
             if left in '#~>':
                 square = '~'
         elif square == '>':
             if right in '#~<':
                 square = '~'
 
-        if square != map_[x, y]:
+        if square != map_.get((x, y), '.'):
             map_[x, y] = square
 
-            for dx, dy in [(0, -1), (-1, 0), (0, 0), (1, 0), (0, 1)]:
+            for dx, dy in [(0, -1), (-1, 0), (1, 0), (0, 1)]:
                 if y + dy <= max_y:
                     closed.discard((x + dx, y + dy))
                     open_.append((x + dx, y + dy))
+
+    # print_map(map_, min_x - 1, 0, max_x + 1, max_y)
 
     print(sum(
         square == '~'
