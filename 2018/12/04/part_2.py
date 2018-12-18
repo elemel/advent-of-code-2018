@@ -21,7 +21,7 @@ def main():
             for minute in range(falls_asleep_minute, wakes_up_minute):
                 counter[guard_id, minute] += 1
 
-    ((guard_id, minute), _), = counter.most_common(1)
+    [((guard_id, minute), _)] = counter.most_common(1)
     print(guard_id * minute)
 
 
