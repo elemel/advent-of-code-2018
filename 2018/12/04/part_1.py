@@ -1,61 +1,39 @@
-from datetime import datetime
-from collections import Counter, defaultdict, namedtuple
-from operator import attrgetter
+from collections import Counter, defaultdict
 from sys import stdin
 
 
-BeginsShift = namedtuple('BeginsShift', ['timestamp', 'id'])
-FallsAsleep = namedtuple('FallsAsleep', ['timestamp'])
-WakesUp = namedtuple('WakesUp', ['timestamp'])
+def parse_guard_id(line):
+    return int(line[26:-13])
 
 
-def parse_entry(line):
-    line = line.strip()
-    timestamp = datetime.strptime(line[1:17], '%Y-%m-%d %H:%M')
-
-    if 'begins shift' in line:
-        id = int(line[26:-13])
-        return BeginsShift(timestamp=timestamp, id=id)
-    elif 'falls asleep' in line:
-        return FallsAsleep(timestamp=timestamp)
-    elif 'wakes up' in line:
-        return WakesUp(timestamp=timestamp)
-    else:
-        raise ValueError('Invalid entry line')
+def parse_minute(line):
+    return int(line[15:17])
 
 
 def main():
-    entries = [parse_entry(line) for line in stdin]
-    entries.sort(key=attrgetter('timestamp'))
+    lines = sorted(line.strip() for line in stdin)
 
-    id = None
-    guard_scores = Counter()
-    guard_entries = defaultdict(list)
+    guard_id = None
+    falls_asleep_minute = None
 
-    for entry in entries:
-        if type(entry) is BeginsShift:
-            id = entry.id
-        else:
-            if type(entry) is WakesUp:
-                falls_asleep_minute = guard_entries[id][-1].timestamp.minute
-                wakes_up_minute = entry.timestamp.minute
-                guard_scores[id] += wakes_up_minute - falls_asleep_minute
+    guard_counter = Counter()
+    guard_minute_counters = defaultdict(Counter)
 
-            guard_entries[id].append(entry)
+    for line in lines:
+        if line.endswith(' begins shift'):
+            guard_id = parse_guard_id(line)
+        elif line.endswith(' falls asleep'):
+            falls_asleep_minute = parse_minute(line)
+        elif line.endswith(' wakes up'):
+            wakes_up_minute = parse_minute(line)
+            guard_counter[guard_id] += wakes_up_minute - falls_asleep_minute
 
-    winner_id, _ = guard_scores.most_common(1)[0]
-    winner_entries = guard_entries[winner_id]
-    minute_scores = Counter()
+            for minute in range(falls_asleep_minute, wakes_up_minute):
+                guard_minute_counters[guard_id][minute] += 1
 
-    for i in range(0, len(winner_entries), 2):
-        falls_asleep_minute = winner_entries[i].timestamp.minute
-        wakes_up_minute = winner_entries[i + 1].timestamp.minute
-
-        for minute in range(falls_asleep_minute, wakes_up_minute):
-            minute_scores[minute] += 1
-
-    winner_minute, _ = minute_scores.most_common(1)[0]
-    print(winner_id * winner_minute)
+    (guard_id, _), = guard_counter.most_common(1)
+    (minute, _), = guard_minute_counters[guard_id].most_common(1)
+    print(guard_id * minute)
 
 
 if __name__ == '__main__':
