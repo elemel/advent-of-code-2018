@@ -7,13 +7,15 @@ def print_map(map_):
 
 
 def change_acre(map_, x, y):
-    width = len(map_[0])
-    height = len(map_)
+    min_x = max(0, x - 1)
+    min_y = max(0, y - 1)
+    max_x = min(x + 1, len(map_[0]) - 1)
+    max_y = min(y + 1, len(map_) - 1)
 
     adjacent = ''.join(sorted(
         map_[y2][x2]
-        for y2 in range(max(0, y - 1), min(y + 2, height))
-        for x2 in range(max(0, x - 1), min(x + 2, width))
+        for y2 in range(min_y, max_y + 1)
+        for x2 in range(min_x, max_x + 1)
         if (x2, y2) != (x, y)))
 
     acre = map_[y][x]
@@ -31,52 +33,34 @@ def change_acre(map_, x, y):
     return acre
 
 
-def get_resource_value(map_):
+def main():
+    map_ = tuple(line.strip() for line in stdin if line.strip())
+
+    minute = 0
+    map_minutes = {}
+    minute_maps = []
+
+    while map_ not in map_minutes:
+        map_minutes[map_] = minute
+        minute_maps.append(map_)
+
+        map_ = tuple(
+            ''.join(change_acre(map_, x, y) for x, _ in enumerate(row))
+            for y, row in enumerate(map_))
+
+        minute += 1
+
+    cycle_start = map_minutes[map_]
+    cycle_length = minute - cycle_start
+    cycle_offset = (1000000000 - cycle_start) % cycle_length
+
+    map_ = minute_maps[cycle_start + cycle_offset]
+
+    # print_map(map_)
+
     wooded_acres = sum(acre == '|' for row in map_ for acre in row)
     lumberyards = sum(acre == '#' for row in map_ for acre in row)
-    return wooded_acres * lumberyards
-
-
-def rfind(list_, value):
-    for i in range(len(list_) - 1, -1, -1):
-        if list_[i] == value:
-            return i
-
-    return -1
-
-
-def main():
-    map_ = [line.strip() for line in stdin if line.strip()]
-
-    resource_values = []
-    cycle_length = 0
-    matches = 0
-
-    for minute in range(0, maxsize):
-        resource_value = get_resource_value(map_)
-
-        if (cycle_length and
-            resource_value == resource_values[minute - cycle_length]):
-
-            matches += 1
-        else:
-            old_minute = rfind(resource_values, resource_value)
-            cycle_length = 0 if old_minute == -1 else minute - old_minute
-            matches = 0
-
-        resource_values.append(resource_value)
-
-        if matches > cycle_length:
-            break
-
-        map_ = [
-            ''.join(change_acre(map_, x, y) for x, _ in enumerate(row))
-            for y, row in enumerate(map_)
-        ]
-
-    cycle_start = len(resource_values) - cycle_length
-    cycle_offset = (1000000000 - cycle_start) % cycle_length
-    print(resource_values[cycle_start + cycle_offset])
+    print(wooded_acres * lumberyards)
 
 
 if __name__ == '__main__':
