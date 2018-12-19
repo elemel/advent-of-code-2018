@@ -1,15 +1,9 @@
-from sys import maxsize, stdin
+from sys import stdin
 
 
 def parse_star(line):
-    head, tail = line.split('<', 1)
-    head, tail = tail.split('>', 1)
-    x, y = [int(s) for s in head.split(',')]
-
-    head, tail = tail.split('<', 1)
-    head, tail = tail.split('>', 1)
-    dx, dy = [int(s) for s in head.split(',')]
-
+    number_line = ''.join(c if c in '-0123456789' else ' ' for c in line)
+    x, y, dx, dy = [int(s) for s in number_line.split()]
     return x, y, dx, dy
 
 
@@ -26,18 +20,29 @@ def get_error(stars, t):
     return (max_x - min_x) + (max_y - min_y)
 
 
+def get_error_gradient(stars, t):
+    return get_error(stars, t + 1) - get_error(stars, t - 1)
+
+
 def main():
-    stars = [parse_star(line) for line in stdin]
-    min_error = maxsize
+    stars = [parse_star(line.strip()) for line in stdin]
 
-    for t in range(0, maxsize):
-        error = get_error(stars, t)
+    min_t = 0
+    max_t = 1
 
-        if error > min_error:
-            print(t - 1)
-            return
+    while get_error_gradient(stars, max_t) < 0:
+        max_t *= 16
 
-        min_error = error
+    while max_t - min_t >= 2:
+        t = (min_t + max_t) // 2
+
+        if get_error_gradient(stars, t) < 0:
+            min_t = t
+        else:
+            max_t = t
+
+    _, t = min((get_error(stars, t), t) for t in range(min_t, max_t + 1))
+    print(t)
 
 
 if __name__ == '__main__':
