@@ -30,6 +30,7 @@ def find_path(map_, unit):
             if (x + dx, y + dy) in closed:
                 continue
 
+            closed.add((x + dx, y + dy))
             square = map_[y + dy][x + dx]
 
             if str(square) == target_str:
@@ -44,8 +45,6 @@ def find_path(map_, unit):
             if square == '.':
                 parents[x + dx, y + dy] = x, y
                 open_.append((x + dx, y + dy))
-
-            closed.add((x + dx, y + dy))
 
     return []
 
@@ -70,7 +69,7 @@ def find_target(map, unit):
 
 
 def main():
-    map_ = [list(line.rstrip('\r\n')) for line in stdin]
+    map_ = [list(line.strip()) for line in stdin]
     units = []
     unit_counts = dict(E=0, G=0)
 

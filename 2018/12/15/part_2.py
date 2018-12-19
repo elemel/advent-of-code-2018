@@ -30,6 +30,7 @@ def find_path(map_, unit):
             if (x + dx, y + dy) in closed:
                 continue
 
+            closed.add((x + dx, y + dy))
             square = map_[y + dy][x + dx]
 
             if str(square) == target_str:
@@ -44,8 +45,6 @@ def find_path(map_, unit):
             if square == '.':
                 parents[x + dx, y + dy] = x, y
                 open_.append((x + dx, y + dy))
-
-            closed.add((x + dx, y + dy))
 
     return []
 
@@ -70,10 +69,10 @@ def find_target(map_, unit):
 
 
 def main():
-    original_map = [list(line.rstrip('\r\n')) for line in stdin]
+    original_map = [line.strip() for line in stdin]
 
     for elf_attack_power in range(3, maxsize):
-        map_ = [list(row) for row in original_map]
+        map_ = [list(line) for line in original_map]
 
         units = []
         unit_counts = dict(E=0, G=0)
