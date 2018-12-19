@@ -1,23 +1,16 @@
-from itertools import groupby
+from collections import Counter
 from sys import stdin
 
 
 def main():
-    twos = 0
-    threes = 0
+    box_ids = [line.strip() for line in stdin]
+    checksum_counts = Counter()
 
-    for line in stdin:
-        id = line.strip()
-        groups = groupby(sorted(list(id)))
-        counts = [len(list(v)) for k, v in groups]
+    for id_ in box_ids:
+        letter_counts = Counter(id_)
+        checksum_counts.update(set(letter_counts.values()))
 
-        if 2 in counts:
-            twos += 1
-
-        if 3 in counts:
-            threes += 1
-
-    print(twos * threes)
+    print(checksum_counts[2] * checksum_counts[3])
 
 
 if __name__ == '__main__':

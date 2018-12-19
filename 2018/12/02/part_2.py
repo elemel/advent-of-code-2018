@@ -3,17 +3,17 @@ from sys import stdin
 
 
 def main():
-    ids = [line.strip() for line in stdin]
+    box_ids = [line.strip() for line in stdin]
 
-    for id_1, id_2 in combinations(ids, 2):
+    for id_1, id_2 in combinations(box_ids, 2):
         if len(id_1) == len(id_2):
-            common = ''.join(
+            common_letters = ''.join(
                 letter_1
                 for letter_1, letter_2 in zip(id_1, id_2)
                 if letter_1 == letter_2)
 
-            if len(common) == len(id_1) - 1:
-                print(common)
+            if len(common_letters) == len(id_1) - 1:
+                print(common_letters)
                 return
 
 
