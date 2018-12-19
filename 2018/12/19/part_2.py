@@ -85,7 +85,7 @@ opcode_funcs = dict(
 
 
 def parse_instruction(line):
-    opcode, a, b, c, *_ = line.split()
+    opcode, a, b, c = line.split()
     return opcode, int(a), int(b), int(c)
 
 
