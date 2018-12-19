@@ -1,40 +1,23 @@
-from collections import namedtuple
+from collections import Counter
 from sys import stdin
 
 
-Claim = namedtuple('Claim', ['id', 'x', 'y', 'width', 'height'])
-
-
 def parse_claim(line):
-    id_str, _, position_str, size_str = line.split()
-    id = int(id_str[1:])
-    x, y = (int(i) for i in position_str[:-1].split(','))
-    width, height = (int(i) for i in size_str.split('x'))
-    return Claim(id=id, x=x, y=y, width=width, height=height)
-
-
-def add_claim_to_fabric(claim, fabric):
-    for x in range(claim.x, claim.x + claim.width):
-        for y in range(claim.y, claim.y + claim.height):
-            fabric[y][x] += 1
+    digit_line = ''.join(char if char.isdigit() else ' ' for char in line)
+    id_, x, y, width, height = [int(word) for word in digit_line.split()]
+    return id_, (x, y, width, height)
 
 
 def main():
-    claims = [parse_claim(line) for line in stdin]
-    fabric_width = max(claim.x + claim.width for claim in claims)
-    fabric_height = max(claim.y + claim.height for claim in claims)
+    claims = dict(parse_claim(line.strip()) for line in stdin)
 
-    # fabric[y][x]
-    fabric = [[0] * fabric_width for _ in range(fabric_height)]
+    fabric = Counter(
+        (x2, y2)
+        for x, y, width, height in claims.values()
+        for y2 in range(y, y + height)
+        for x2 in range(x, x + width))
 
-    for claim in claims:
-        add_claim_to_fabric(claim, fabric)
-
-    print(
-        sum(
-            fabric[y][x] >= 2
-            for x in range(fabric_width)
-            for y in range(fabric_height)))
+    print(sum(n >= 2 for n in fabric.values()))
 
 
 if __name__ == '__main__':

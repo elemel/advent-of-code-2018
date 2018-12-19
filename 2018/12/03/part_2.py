@@ -1,46 +1,30 @@
-from collections import namedtuple
+from collections import defaultdict
+from itertools import chain
 from sys import stdin
 
 
-Claim = namedtuple('Claim', ['id', 'x', 'y', 'width', 'height'])
-
-
 def parse_claim(line):
-    id_str, _, position_str, size_str = line.split()
-    id = int(id_str[1:])
-    x, y = (int(i) for i in position_str[:-1].split(','))
-    width, height = (int(i) for i in size_str.split('x'))
-    return Claim(id=id, x=x, y=y, width=width, height=height)
-
-
-def add_claim_to_fabric(claim, fabric):
-    for x in range(claim.x, claim.x + claim.width):
-        for y in range(claim.y, claim.y + claim.height):
-            fabric[y][x].add(claim.id)
+    digit_line = ''.join(c if c.isdigit() else ' ' for c in line)
+    id_, x, y, width, height = [int(s) for s in digit_line.split()]
+    return id_, (x, y, width, height)
 
 
 def main():
-    claims = [parse_claim(line) for line in stdin]
-    fabric_width = max(claim.x + claim.width for claim in claims)
-    fabric_height = max(claim.y + claim.height for claim in claims)
+    claims = dict(parse_claim(line.strip()) for line in stdin)
+    fabric = defaultdict(list)
 
-    # fabric[y][x]
-    fabric = [[set() for _ in range(fabric_width)]
-        for _ in range(fabric_height)]
+    for id_, (x, y, width, height) in claims.items():
+        for y2 in range(y, y + height):
+            for x2 in range(x, x + width):
+                fabric[x2, y2].append(id_)
 
-    for claim in claims:
-        add_claim_to_fabric(claim, fabric)
+    overlapping_ids = set(chain.from_iterable(
+        ids
+        for ids in fabric.values()
+        if len(ids) >= 2))
 
-    overlapping_ids = set()
-
-    for x in range(fabric_width):
-        for y in range(fabric_height):
-            if len(fabric[y][x]) >= 2:
-                overlapping_ids |= fabric[y][x]
-
-    for claim in claims:
-        if claim.id not in overlapping_ids:
-            print(claim.id)
+    [intact_id] = set(claims) - overlapping_ids
+    print(intact_id)
 
 
 if __name__ == '__main__':
