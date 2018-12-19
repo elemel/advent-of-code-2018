@@ -1,23 +1,17 @@
+from itertools import cycle
 from sys import stdin
 
 
 def main():
-    sequence = [int(line) for line in stdin]
+    sequence = cycle(int(line.strip()) for line in stdin)
     current = 0
-    seen = set([current])
-    duplicate = None
+    seen = set()
 
-    while not duplicate:
-        for change in sequence:
-            current += change
+    while current not in seen:
+        seen.add(current)
+        current += next(sequence)
 
-            if current in seen:
-                duplicate = current
-                break
-
-            seen.add(current)
-
-    print(duplicate)
+    print(current)
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@ from sys import stdin
 
 
 def main():
-    print(sum((int(line) for line in stdin)))
+    print(sum((int(line.strip()) for line in stdin)))
 
 
 if __name__ == '__main__':
