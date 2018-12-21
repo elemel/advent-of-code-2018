@@ -89,13 +89,16 @@ def main():
             continue
 
         path_distances[y, x, i] = distance
-        room_distances[y, x] = min(distance, room_distances.get((y, x), maxsize))
+
+        room_distances[y, x] = min(
+            distance, room_distances.get((y, x), maxsize))
 
         for j, dy, dx in transitions[i]:
-            if dy + dx != 0:
+            if dy + dx == 0:
+                queue.appendleft((distance, y, x, j))
+            else:
                 doors.add((y + dy, x + dx))
-    
-            queue.append((distance + abs(dy + dx), y + 2 * dy, x + 2 * dx, j))
+                queue.append((distance + 1, y + 2 * dy, x + 2 * dx, j))
 
     # print_map(room_distances.keys(), doors)
 
