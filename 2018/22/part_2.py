@@ -19,6 +19,10 @@ region_tools = {
 }
 
 
+def manhattan_distance(x1, y1, x2, y2):
+    return abs(x2 - x1) + abs(y2 - y1)
+
+
 def main():
     depth_line, target_line = stdin.read().splitlines()
     depth = int(depth_line.split(':')[-1])
@@ -65,11 +69,11 @@ def main():
     # print_map(0, 0, target_x, target_y)
 
     open_ = []
-    heappush(open_, (0, 0, 0, TORCH))
+    heappush(open_, (target_x + target_y, 0, 0, 0, TORCH))
     closed = {}
 
     while open_:
-        t, x, y, tool = heappop(open_)
+        th, t, x, y, tool = heappop(open_)
 
         if t >= closed.get((x, y, tool), maxsize):
             continue
@@ -84,14 +88,15 @@ def main():
 
         for other_tool in region_tools[type_]:
             if other_tool != tool:
-                heappush(open_, (t + 7, x, y, other_tool))
+                heappush(open_, (th + 7, t + 7, x, y, other_tool))
 
         for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
             if x + dx >= 0 and y + dy >= 0:
                 adjacent_type = get_region_type(x + dx, y + dy)
 
                 if tool in region_tools[adjacent_type]:
-                    heappush(open_, (t + 1, x + dx, y + dy, tool))
+                    h = manhattan_distance(x + dx, y + dy, target_x, target_y)
+                    heappush(open_, (t + 1 + h, t + 1, x + dx, y + dy, tool))
 
 
 if __name__ == '__main__':
