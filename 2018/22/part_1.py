@@ -46,7 +46,10 @@ def main():
 
     # print_map(0, 0, target_x, target_y)
 
-    print(sum(get_region_type(x, y) for y in range(0, target_y + 1) for x in range(0, target_x + 1)))
+    print(sum(
+        get_region_type(x, y)
+        for y in range(0, target_y + 1)
+        for x in range(0, target_x + 1)))
 
 
 if __name__ == '__main__':

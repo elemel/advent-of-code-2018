@@ -19,10 +19,6 @@ region_tools = {
 }
 
 
-def manhattan_distance(x1, y1, x2, y2):
-    return abs(x2 - x1) + abs(y2 - y1)
-
-
 def main():
     depth_line, target_line = stdin.read().splitlines()
     depth = int(depth_line.split(':')[-1])
@@ -52,6 +48,9 @@ def main():
     def get_region_type(x, y):
         return get_erosion_level(x, y) % 3
 
+    def get_heuristic(x, y, tool):
+        return abs(target_x - x) + abs(target_y - y) + 7 * (tool != TORCH)
+
     def print_map(min_x, min_y, max_x, max_y):
         def get_char(x, y):
             if (x, y) == (0, 0):
@@ -73,7 +72,7 @@ def main():
     closed = {}
 
     while open_:
-        th, t, x, y, tool = heappop(open_)
+        _, t, x, y, tool = heappop(open_)
 
         if t >= closed.get((x, y, tool), maxsize):
             continue
@@ -88,14 +87,15 @@ def main():
 
         for other_tool in region_tools[type_]:
             if other_tool != tool:
-                heappush(open_, (th + 7, t + 7, x, y, other_tool))
+                h = get_heuristic(x, y, other_tool)
+                heappush(open_, (t + 7 + h, t + 7, x, y, other_tool))
 
         for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
             if x + dx >= 0 and y + dy >= 0:
                 adjacent_type = get_region_type(x + dx, y + dy)
 
                 if tool in region_tools[adjacent_type]:
-                    h = manhattan_distance(x + dx, y + dy, target_x, target_y)
+                    h = get_heuristic(x + dx, y + dy, tool)
                     heappush(open_, (t + 1 + h, t + 1, x + dx, y + dy, tool))
 
 
