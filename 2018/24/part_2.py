@@ -53,6 +53,7 @@ def parse_group(line, army, number, boost):
 
     if middle_words:
         middle_str = ' '.join(middle_words).strip('()')
+
         for part in middle_str.split('; '):
             if part.startswith('weak to '):
                 weaknesses = part[8:].split(', ')
