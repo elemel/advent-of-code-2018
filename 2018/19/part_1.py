@@ -1,108 +1,50 @@
-from sys import stdin
-
-
-def addr(registers, a, b, c):
-    registers[c] = registers[a] + registers[b]
-
-
-def addi(registers, a, b, c):
-    registers[c] = registers[a] + b
-
-
-def mulr(registers, a, b, c):
-    registers[c] = registers[a] * registers[b]
-
-
-def muli(registers, a, b, c):
-    registers[c] = registers[a] * b
-
-
-def banr(registers, a, b, c):
-    registers[c] = registers[a] & registers[b]
-
-
-def bani(registers, a, b, c):
-    registers[c] = registers[a] & b
-
-
-def borr(registers, a, b, c):
-    registers[c] = registers[a] | registers[b]
-
-
-def bori(registers, a, b, c):
-    registers[c] = registers[a] | b
-
-
-def setr(registers, a, b, c):
-    registers[c] = registers[a]
-
-
-def seti(registers, a, b, c):
-    registers[c] = a
-
-
-def gtir(registers, a, b, c):
-    registers[c] = int(a > registers[b])
-
-
-def gtri(registers, a, b, c):
-    registers[c] = int(registers[a] > b)
-
-
-def gtrr(registers, a, b, c):
-    registers[c] = int(registers[a] > registers[b])
-
-
-def eqir(registers, a, b, c):
-    registers[c] = int(a == registers[b])
-
-
-def eqri(registers, a, b, c):
-    registers[c] = int(registers[a] == b)
-
-
-def eqrr(registers, a, b, c):
-    registers[c] = int(registers[a] == registers[b])
-
-
-opcode_funcs = dict(
-    addr=addr,
-    addi=addi,
-    mulr=mulr,
-    muli=muli,
-    banr=banr,
-    bani=bani,
-    borr=borr,
-    bori=bori,
-    setr=setr,
-    seti=seti,
-    gtir=gtir,
-    gtri=gtri,
-    gtrr=gtrr,
-    eqir=eqir,
-    eqri=eqri,
-    eqrr=eqrr)
-
-
-def parse_instruction(line):
-    opcode, a, b, c = line.split()
-    return opcode, int(a), int(b), int(c)
-
-
 def main():
-    ip_line, *program_lines = stdin.read().splitlines()
-    ip = int(ip_line.split()[-1])
-    program = [parse_instruction(line) for line in program_lines]
+    a = 0; b = 0; c = 0; d = 0; f = 0
 
-    registers = [0, 0, 0, 0, 0, 0]
+    f += 2
+    f *= f
+    f *= 19
+    f *= 11
+    d += 4
+    d *= 22
+    d += 21
+    f += d
 
-    while 0 <= registers[ip] < len(program):
-        opcode, a, b, c = program[registers[ip]]
-        func = opcode_funcs[opcode]
-        func(registers, a, b, c)
-        registers[ip] += 1
+    if a == 1:
+        d = 27
+        d *= 28
+        d += 29
+        d *= 30
+        d *= 14
+        d *= 32
+        f += d
+        a = 0
 
-    print(registers[0])
+    b = 1
+
+    while True:
+        c = 1
+
+        while True:
+            d = b * c
+            d = int(d == f)
+
+            if d == 1:
+                a += b
+
+            c += 1
+            d = int(c > f)
+
+            if d == 1:
+                break
+
+        b += 1
+        d = int(b > f)
+
+        if d == 1:
+            break
+
+    print(a)
 
 
 if __name__ == '__main__':
