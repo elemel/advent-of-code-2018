@@ -234,9 +234,6 @@ def main():
     outputs[ip] = 'ip'
     inputs = list(outputs)
 
-    numbered = '--number' in argv
-    number_width = max(1, len(str(len(program) - 1)))
-
     target = 'elfcode'
 
     if '--target=c' in argv:
@@ -281,7 +278,8 @@ def main():
         comment = ''
 
         if target == 'elfcode':
-            number = f'{i:0{number_width}}  '
+            width = max(1, len(str(n - 1)))
+            number = f'{i:0{width}}  '
 
         if target == 'c':
             label = f'i{i}: '
