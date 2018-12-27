@@ -354,12 +354,10 @@ def main():
                 comment = ' -- condition'
 
         if i in labels and target == 'python' and ':' in instruction:
-            print()
             print(f'{indentation}label.i{i}')
             print(f'{indentation}{instruction}')
-            print()
         else:
-            print(f'{number}{indentation}{label}{instruction}{comment}'.rstrip())
+            print(f'{number}{indentation}{label}{instruction}{comment}')
 
     if target == 'c':
         print(f'    i{n}:')
