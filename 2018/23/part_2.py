@@ -6,19 +6,40 @@ from sys import maxsize, stdin
 def parse_nanobot(line):
     number_line = ''.join(c if c in '-0123456789' else ' ' for c in line)
     x, y, z, r = [int(s) for s in number_line.split()]
-    return (x, y, z), r
+    p = x, y, z
+    return p, r
+
+
+def midpoint(p1, p2):
+    return tuple((x1 + x2) // 2 for x1, x2 in zip(p1, p2))
 
 
 def manhattan_distance(p1, p2):
-    x1, y1, z1 = p1
-    x2, y2, z2 = p2
-    return abs(x2 - x1) + abs(y2 - y1) + abs(z2 - z1)
+    return sum(abs(x2 - x1) for x1, x2 in zip(p1, p2))
 
 
 def in_range(c1, c2):
     p1, r1 = c1
     p2, r2 = c2
     return manhattan_distance(p1, p2) <= r1 + r2
+
+
+def subdivide(p1, p2, p):
+    x1, y1, z1 = p1
+    x2, y2, z2 = p2
+    x, y, z = p
+
+    if x2 - x1 >= max(y2 - y1, z2 - z1):
+        p3 = x, y2, z2
+        p4 = x + 1, y1, z1
+    elif y2 - y1 >= z2 - z1:
+        p3 = x2, y, z2
+        p4 = x1, y + 1, z1
+    else:
+        p3 = x2, y2, z
+        p4 = x1, y1, z + 1
+
+    return p3, p4
 
 
 def main():
@@ -60,15 +81,7 @@ def main():
 
     while region_queue:
         p1, p2 = region_queue.popleft()
-
-        x1, y1, z1 = p1
-        x2, y2, z2 = p2
-
-        x = (x1 + x2) // 2
-        y = (y1 + y2) // 2
-        z = (z1 + z2) // 2
-
-        p = x, y, z
+        p = midpoint(p1, p2)
         r = max(manhattan_distance(p, p1), manhattan_distance(p, p2))
         c = p, r
 
@@ -80,15 +93,9 @@ def main():
             min_distance = min(min_distance, distance)
             continue
 
-        if x2 - x1 >= max(y2 - y1, z2 - z1):
-            region_queue.append((p1, (x, y2, z2)))
-            region_queue.append(((x + 1, y1, z1), p2))
-        elif y2 - y1 >= z2 - z1:
-            region_queue.append((p1, (x2, y, z2)))
-            region_queue.append(((x1, y + 1, z1), p2))
-        else:
-            region_queue.append((p1, (x2, y2, z)))
-            region_queue.append(((x1, y1, z + 1), p2))
+        p3, p4 = subdivide(p1, p2, p)
+        region_queue.append((p1, p3))
+        region_queue.append((p4, p2))
 
     print(min_distance)
 

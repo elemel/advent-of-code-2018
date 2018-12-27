@@ -4,13 +4,12 @@ from sys import stdin
 def parse_nanobot(line):
     number_line = ''.join(c if c in '-0123456789' else ' ' for c in line)
     x, y, z, r = [int(s) for s in number_line.split()]
-    return (x, y, z), r
+    p = x, y, z
+    return p, r
 
 
 def manhattan_distance(p1, p2):
-    x1, y1, z1 = p1
-    x2, y2, z2 = p2
-    return abs(x2 - x1) + abs(y2 - y1) + abs(z2 - z1)
+    return sum(abs(x2 - x1) for x1, x2 in zip(p1, p2))
 
 
 def main():
