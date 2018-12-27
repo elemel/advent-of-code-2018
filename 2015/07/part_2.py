@@ -48,7 +48,7 @@ def main():
 
     for source, wire in circuit:
         sources[wire] = source
-        input_wires = [token for token in source if type(token) == str]
+        input_wires = [part for part in source if type(part) == str]
 
         for input_wire in input_wires:
             output_wire_sets[input_wire].add(wire)
