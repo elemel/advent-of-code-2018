@@ -1,7 +1,31 @@
 # ElfCode disassembler
 
 
+from collections import defaultdict
 from sys import argv, stdin
+
+
+def get_next_instructions(i, opcode, a, b, c, ip):
+    if c == ip:
+        if opcode == 'addr':
+            if a == ip and b == ip:
+                return [i + i + 1]
+            elif a == ip:
+                # Assume b in [0, 1]
+                return [i + 1, i + 2]
+            elif b == ip:
+                # Assume b in [0, 1]
+                return [i + 1, i + 2]
+        elif opcode == 'addi':
+            if a == ip:
+                return [i + b + 1]
+        elif opcode == 'mulr':
+            if a == ip and b == ip:
+                return [i * i + 1]
+        elif opcode == 'seti':
+            return [a + 1]
+
+    return [i + 1]
 
 
 def format_instruction_elfcode(i, n, opcode, a, b, c, inputs, outputs):
@@ -242,6 +266,29 @@ def main():
     if '--target=python' in argv:
         target = 'python'
 
+    indented = '--indent' in argv
+
+    n = len(program)
+
+    gotos = []
+
+    for i, (opcode, a, b, c) in enumerate(program):
+        for i2 in get_next_instructions(i, opcode, a, b, c, ip):
+            if i2 != i + 1:
+                i2 = min(i2, n)
+                gotos.append((i, i2))
+
+    labels = set()
+
+    for i1, i2 in gotos:
+        labels.add(i2)
+
+    indentations = defaultdict(int)
+
+    for i1, i2 in gotos:
+        for i in range(i2 + 1, i1):
+            indentations[i] += 1
+
     if target == 'c':
         variables = ', '.join(
             f'{name} = 0' for name in outputs if name != 'ip')
@@ -263,12 +310,17 @@ def main():
         print(f'    {variables}')
         print()
 
-    n = len(program)
-
     for i, (opcode, a, b, c) in enumerate(program):
         inputs[ip] = i
 
         indentation = '' if target == 'elfcode' else '    '
+
+        if indented:
+            if target == 'elfcode':
+                indentation += 2 * indentations[i] * ' '
+            else:
+                indentation += 4 * indentations[i] * ' '
+
         number = ''
         label = ''
 
@@ -281,30 +333,33 @@ def main():
             width = max(1, len(str(n - 1)))
             number = f'{i:0{width}}  '
 
-        if target == 'c':
-            label = f'i{i}: '
-        elif target == 'python':
-            label = f'label.i{i}; '
+        if i in labels:
+            if target == 'c':
+                label = f'i{i}: '
+            elif target == 'python':
+                label = f'label.i{i}; '
 
         if target == 'elfcode':
             if opcode == 'addi' and a == ip and c == ip:
-                comment = f'  goto {i + b + 1}'
+                comment = f' -- goto {i + b + 1}'
             elif opcode == 'addr' and a == ip and c == ip:
-                comment = '  branch'
+                comment = ' -- branch'
             elif opcode == 'addr' and b == ip and c == ip:
-                comment = '  branch'
+                comment = ' -- branch'
+            elif opcode == 'mulr' and a == ip and b == ip and c == ip:
+                comment = f' -- goto {i * i + 1}'
             elif opcode == 'seti' and c == ip:
-                comment = f'  goto {a + 1}'
+                comment = f' -- goto {a + 1}'
             elif opcode.startswith('eq') or opcode.startswith('gt'):
-                comment = '  condition'
+                comment = ' -- condition'
 
-        if target == 'python' and instruction.startswith('if '):
+        if i in labels and target == 'python' and ':' in instruction:
             print()
             print(f'{indentation}label.i{i}')
             print(f'{indentation}{instruction}')
             print()
         else:
-            print(f'{indentation}{number}{label}{instruction:20}{comment}')
+            print(f'{number}{indentation}{label}{instruction}{comment}'.rstrip())
 
     if target == 'c':
         print(f'    i{n}:')
