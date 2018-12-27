@@ -43,7 +43,6 @@ def provide_signal(source, signals):
 
 def main():
     circuit = [parse_instruction(line.strip()) for line in stdin]
-
     sources = {}
     output_wire_sets = defaultdict(set)
 
