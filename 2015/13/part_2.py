@@ -37,7 +37,6 @@ def main():
         change_dicts[guest]['you'] = 0
 
     guests.append('you')
-    guests.sort()
 
     max_total_change = max(
         get_total_change(seating_arrangement, change_dicts)

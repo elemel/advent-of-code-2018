@@ -30,7 +30,7 @@ def main():
     for guest_1, change, guest_2, in changes:
         change_dicts[guest_1][guest_2] = change
 
-    guests = sorted(change_dicts.keys())
+    guests = list(change_dicts.keys())
 
     max_total_change = max(
         get_total_change(seating_arrangement, change_dicts)
