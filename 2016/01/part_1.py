@@ -13,10 +13,8 @@ def main():
         for s in stdin.read().strip().split(', ')
     ]
 
-    x = 0
-    y = 0
-    dx = 0
-    dy = -1
+    x, y = 0, 0
+    dx, dy = 0, -1
 
     for turn, walk in instructions:
         dx, dy = -turn * dy, turn * dx
