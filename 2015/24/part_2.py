@@ -5,45 +5,38 @@ def solve(
     packages,
     package_index,
     balanced_weight,
-    group_1,
-    group_2,
-    group_3,
-    group_4,
-    package_count,
-    quantum_entanglement,
+    groups,
+    stats,
     seen):
 
-    if (seen.get((group_1, group_2, group_3, group_4), (maxsize, maxsize)) <=
-        (package_count, quantum_entanglement)):
-
+    if stats >= seen.get(groups, (maxsize, maxsize)):
         return maxsize, maxsize
 
-    seen[group_1, group_2, group_3, group_4] = (
-        package_count, quantum_entanglement)
+    seen[groups] = stats
 
     if package_index == len(packages):
-        return package_count, quantum_entanglement
+        return stats
 
     package_weight = packages[package_index]
     result = maxsize, maxsize
+    group_1, group_2, group_3, group_4 = groups
 
     if group_1 + package_weight <= balanced_weight:
+        package_count, quantum_entanglement = stats
+
         result = min(
             result,
             solve(
                 packages,
                 package_index + 1,
                 balanced_weight,
-                group_1 + package_weight,
-                group_2,
-                group_3,
-                group_4,
-                package_count + 1,
-                quantum_entanglement * package_weight,
+                (group_1 + package_weight, group_2, group_3, group_4),
+                (package_count + 1, quantum_entanglement * package_weight),
                 seen))
 
     if group_2 + package_weight <= balanced_weight:
-        sorted_groups = sorted([group_2 + package_weight, group_3, group_4])
+        new_group_2, new_group_3, new_group_4 = sorted(
+            [group_2 + package_weight, group_3, group_4])
 
         result = min(
             result,
@@ -51,27 +44,21 @@ def solve(
                 packages,
                 package_index + 1,
                 balanced_weight,
-                group_1,
-                sorted_groups[0],
-                sorted_groups[1],
-                sorted_groups[2],
-                package_count,
-                quantum_entanglement,
+                (group_1, new_group_2, new_group_3, new_group_4),
+                stats,
                 seen))
 
     if group_3 + package_weight <= balanced_weight:
+        new_group_3, new_group_4 = sorted([group_3 + package_weight, group_4])
+
         result = min(
             result,
             solve(
                 packages,
                 package_index + 1,
                 balanced_weight,
-                group_1,
-                group_2,
-                min(group_3 + package_weight, group_4),
-                max(group_3 + package_weight, group_4),
-                package_count,
-                quantum_entanglement,
+                (group_1, group_2, new_group_3, new_group_4),
+                stats,
                 seen))
 
     if group_4 + package_weight <= balanced_weight:
@@ -81,12 +68,8 @@ def solve(
                 packages,
                 package_index + 1,
                 balanced_weight,
-                group_1,
-                group_2,
-                group_3,
-                group_4 + package_weight,
-                package_count,
-                quantum_entanglement,
+                (group_1, group_2, group_3, group_4 + package_weight),
+                stats,
                 seen))
 
     return result
@@ -99,7 +82,7 @@ def main():
     balanced_weight = sum(packages) // 4
 
     _, quantum_entanglement = solve(
-        packages, 0, balanced_weight, 0, 0, 0, 0, 0, 1, {})
+        packages, 0, balanced_weight, (0, 0, 0, 0), (0, 1), {})
 
     print(quantum_entanglement)
 
