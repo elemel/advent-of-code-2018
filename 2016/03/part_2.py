@@ -1,13 +1,4 @@
-from itertools import zip_longest
 from sys import stdin
-
-
-# https://docs.python.org/3/library/itertools.html
-def grouper(iterable, n, fillvalue=None):
-    "Collect data into fixed-length chunks or blocks"
-    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
-    args = [iter(iterable)] * n
-    return zip_longest(*args, fillvalue=fillvalue)
 
 
 def parse_triangle(line):
@@ -22,10 +13,15 @@ def is_possible_triangle(a, b, c):
 def main():
     row_triangles = [parse_triangle(line.strip()) for line in stdin]
 
+    triangle_triplets = [
+        row_triangles[i:(i + 3)]
+        for i in range(0, len(row_triangles), 3)
+    ]
+
     column_triangles = [
         column_triangle
-        for triangle_triplet in grouper(row_triangles, 3)
-        for column_triangle in zip(*triangle_triplet)
+        for t1, t2, t3 in triangle_triplets
+        for column_triangle in zip(t1, t2, t3)
     ]
 
     print(sum(is_possible_triangle(a, b, c) for a, b, c in column_triangles))
