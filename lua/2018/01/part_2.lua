@@ -1,6 +1,9 @@
-local iterator = require("iterator")
+local yulea = require("yulea")
 
-local changes = iterator.cycle(iterator.map(io.lines(), tonumber))
+local cycle = yulea.iterator.cycle
+local map = yulea.iterator.map
+
+local changes = cycle(map(io.lines(), tonumber))
 local frequency = 0
 local seen = {}
 
