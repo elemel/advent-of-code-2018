@@ -7,7 +7,13 @@ local function parseClaim(line)
   local id, x, y, width, height =
     string.match(line, "#(%d+) @ (%d+),(%d+): (%d+)x(%d+)")
 
-  return {id = id, x = x, y = y, width = width, height = height}
+  return {
+    id = tonumber(id),
+    x = tonumber(x),
+    y = tonumber(y),
+    width = tonumber(width),
+    height = tonumber(height),
+  }
 end
 
 local function overlaps(claim, fabric)
