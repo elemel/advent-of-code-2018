@@ -54,6 +54,14 @@ local function distinct(iterator)
   end)
 end
 
+local function elements(t)
+  return coroutine.wrap(function()
+    for _, e in ipairs(t) do
+      coroutine.yield(e)
+    end
+  end)
+end
+
 local function enumerate(iterator, index)
   index = index or 1
 
@@ -61,6 +69,16 @@ local function enumerate(iterator, index)
     for element in iterator do
       coroutine.yield(index, element)
       index = index + 1
+    end
+  end)
+end
+
+local function filter(iterator, predicate)
+  return coroutine.wrap(function()
+    for element in iterator do
+      if predicate(element) then
+        coroutine.yield(element)
+      end
     end
   end)
 end
@@ -73,12 +91,52 @@ local function keys(t)
   end)
 end
 
+local function min(iterator, less)
+  local result
+
+  if less then
+    for element in iterator do
+      if result == nil or less(element, result) then
+        result = element
+      end
+    end
+  else
+    for element in iterator do
+      if result == nil or element < result then
+        result = element
+      end
+    end
+  end
+
+  return result
+end
+
 local function map(iterator, mapper)
   return coroutine.wrap(function()
     for element in iterator do
       coroutine.yield(mapper(element))
     end
   end)
+end
+
+local function max(iterator, less)
+  local result
+
+  if less then
+    for element in iterator do
+      if result == nil or less(result, element) then
+        result = element
+      end
+    end
+  else
+    for element in iterator do
+      if result == nil or result < element then
+        result = element
+      end
+    end
+  end
+
+  return result
 end
 
 local function multiset(iterator, result)
@@ -103,6 +161,16 @@ local function range(first, last, step)
   end)
 end
 
+local function sum(iterator)
+  local result = 0
+
+  for element in iterator do
+    result = result + element
+  end
+
+  return result
+end
+
 local function values(t)
   return coroutine.wrap(function()
     for _, v in pairs(t) do
@@ -117,10 +185,15 @@ return {
   chars = chars,
   cycle = cycle,
   distinct = distinct,
+  elements = elements,
   enumerate = enumerate,
+  filter = filter,
   keys = keys,
+  min = min,
   map = map,
+  max = max,
   multiset = multiset,
   range = range,
+  sum = sum,
   values = values,
 }
