@@ -5,6 +5,7 @@ local array = yulea.iterator.array
 local elements = yulea.iterator.elements
 local keys = yulea.iterator.keys
 local map = yulea.iterator.map
+local tableLess = yulea.table.less
 
 local function parseRequirement(line)
   return {string.match(
@@ -38,19 +39,9 @@ for step in keys(outputs) do
   end
 end
 
-local inProgress = heap:new(function(key1, key2)
-  local time1, step1 = table.unpack(key1)
-  local time2, step2 = table.unpack(key2)
-
-  if time1 == time2 then
-    return step1 < step2
-  else
-    return time1 < time2
-  end
-end)
-
 local time = 0
 local idle = 5
+local inProgress = heap:new(tableLess)
 local completed = {}
 
 while not available:empty() or not inProgress:empty() do
@@ -66,7 +57,6 @@ while not available:empty() or not inProgress:empty() do
   idle = idle + 1
 
   table.insert(completed, step)
-
   local outputs = outputs[step]
 
   if outputs then
