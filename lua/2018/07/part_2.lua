@@ -1,0 +1,86 @@
+local heap = require("skew_heap")
+local yulea = require("yulea")
+
+local array = yulea.iterator.array
+local elements = yulea.iterator.elements
+local keys = yulea.iterator.keys
+local map = yulea.iterator.map
+
+local function parseRequirement(line)
+  return {string.match(
+    line, "Step (.) must be finished before step (.) can begin%.")}
+end
+
+local function duration(step)
+  return 60 + string.byte(step) - string.byte('A') + 1
+end
+
+local requirements = array(map(io.lines(), parseRequirement))
+
+local inputs = {}
+local outputs = {}
+
+for requirement in elements(requirements) do
+  local input, output = table.unpack(requirement)
+
+  inputs[output] = inputs[output] or {}
+  inputs[output][input] = true
+
+  outputs[input] = outputs[input] or {}
+  outputs[input][output] = true
+end
+
+local available = heap:new()
+
+for step in keys(outputs) do
+  if not inputs[step] then
+    available:insert(step, true)
+  end
+end
+
+local inProgress = heap:new(function(key1, key2)
+  local time1, step1 = table.unpack(key1)
+  local time2, step2 = table.unpack(key2)
+
+  if time1 == time2 then
+    return step1 < step2
+  else
+    return time1 < time2
+  end
+end)
+
+local time = 0
+local idle = 5
+local completed = {}
+
+while not available:empty() or not inProgress:empty() do
+  while not available:empty() and idle >= 1 do
+    idle = idle - 1
+    local step = available:pop()
+    inProgress:insert({time + duration(step), step}, true)
+  end
+
+  local key = inProgress:pop()
+  local step
+  time, step = table.unpack(key)
+  idle = idle + 1
+
+  table.insert(completed, step)
+
+  local outputs = outputs[step]
+
+  if outputs then
+    outputs[step] = nil
+
+    for output in keys(outputs) do
+      inputs[output][step] = nil
+
+      if not next(inputs[output]) then
+        inputs[output] = nil
+        available:insert(output, true)
+      end
+    end
+  end
+end
+
+print(time)
