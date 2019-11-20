@@ -5,6 +5,7 @@ local array = yulea.iterator.array
 local elements = yulea.iterator.elements
 local keys = yulea.iterator.keys
 local map = yulea.iterator.map
+local memoize = yulea.table.memoize
 local tableLess = yulea.table.less
 
 local function parseRequirement(line)
@@ -18,23 +19,20 @@ end
 
 local requirements = array(map(io.lines(), parseRequirement))
 
-local inputs = {}
-local outputs = {}
+local inputs = memoize(function(k) return {} end)
+local outputs = memoize(function(k) return {} end)
 
 for requirement in elements(requirements) do
   local input, output = table.unpack(requirement)
 
-  inputs[output] = inputs[output] or {}
   inputs[output][input] = true
-
-  outputs[input] = outputs[input] or {}
   outputs[input][output] = true
 end
 
 local available = heap:new()
 
 for step in keys(outputs) do
-  if not inputs[step] then
+  if not next(inputs[step]) then
     available:insert(step, true)
   end
 end
@@ -57,18 +55,12 @@ while not available:empty() or not inProgress:empty() do
   idle = idle + 1
 
   table.insert(completed, step)
-  local outputs = outputs[step]
 
-  if outputs then
-    outputs[step] = nil
+  for output in keys(outputs[step]) do
+    inputs[output][step] = nil
 
-    for output in keys(outputs) do
-      inputs[output][step] = nil
-
-      if not next(inputs[output]) then
-        inputs[output] = nil
-        available:insert(output, true)
-      end
+    if not next(inputs[output]) then
+      available:insert(output, true)
     end
   end
 end

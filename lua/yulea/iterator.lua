@@ -114,7 +114,11 @@ end
 local function map(iterator, mapper)
   return coroutine.wrap(function()
     for element in iterator do
-      coroutine.yield(mapper(element))
+      local result = mapper(element)
+
+      if result ~= nil then
+        coroutine.yield(result)
+      end
     end
   end)
 end
@@ -149,6 +153,20 @@ local function multiset(iterator, result)
   return result
 end
 
+local function numbers(file)
+  return coroutine.wrap(function()
+    while true do
+      local number = file:read("*number")
+
+      if number == nil then
+        break
+      end
+
+      coroutine.yield(number)
+    end
+  end)
+end
+
 local function range(first, last, step)
   first = first or 1
   last = last or math.huge
@@ -157,6 +175,16 @@ local function range(first, last, step)
   return coroutine.wrap(function()
     for i = first, last, step do
       coroutine.yield(i)
+    end
+  end)
+end
+
+local function rep(v, n)
+  n = n or math.huge
+
+  return coroutine.wrap(function()
+    for i = 1, n do
+      coroutine.yield(v)
     end
   end)
 end
@@ -171,10 +199,26 @@ local function sum(iterator)
   return result
 end
 
+local function take(iterator, n)
+  return coroutine.wrap(function()
+    for i = 1, n do
+      coroutine.yield(iterator())
+    end
+  end)
+end
+
 local function values(t)
   return coroutine.wrap(function()
     for _, v in pairs(t) do
       coroutine.yield(v)
+    end
+  end)
+end
+
+local function words(s)
+  return coroutine.wrap(function()
+    for w in s:gmatch("%S+") do
+      coroutine.yield(w)
     end
   end)
 end
@@ -193,7 +237,11 @@ return {
   map = map,
   max = max,
   multiset = multiset,
+  numbers = numbers,
   range = range,
+  rep = rep,
   sum = sum,
+  take = take,
   values = values,
+  words = words,
 }

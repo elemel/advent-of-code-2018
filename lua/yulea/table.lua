@@ -16,6 +16,12 @@ local function less(t1, t2, less)
   return #t1 < #t2
 end
 
+local function mapper(t)
+  return function(k)
+    return t[k]
+  end
+end
+
 local function mapValues(t, mapper, result)
   result = result or {}
 
@@ -24,6 +30,16 @@ local function mapValues(t, mapper, result)
   end
 
   return result
+end
+
+local function memoize(f)
+  return setmetatable({}, {
+    __index = function(t, k)
+      local v = f(k)
+      t[k] = v
+      return v
+    end
+  })
 end
 
 local function reverse(t)
@@ -50,7 +66,9 @@ end
 
 return {
   less = less,
+  mapper = mapper,
   mapValues = mapValues,
+  memoize = memoize,
   reverse = reverse,
   sumValues = sumValues,
 }
