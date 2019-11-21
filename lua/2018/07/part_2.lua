@@ -1,9 +1,9 @@
 local heap = require("skew_heap")
 local yulea = require("yulea")
 
-local array = yulea.iterator.array
-local elements = yulea.iterator.elements
-local keys = yulea.iterator.keys
+local array = yulea.table.array
+local elements = yulea.table.elements
+local keys = yulea.table.keys
 local map = yulea.iterator.map
 local memoize = yulea.table.memoize
 local tableLess = yulea.table.less

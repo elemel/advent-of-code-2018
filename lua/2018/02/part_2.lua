@@ -1,6 +1,6 @@
 local yulea = require("yulea")
 
-local array = yulea.iterator.array
+local array = yulea.table.array
 local range = yulea.iterator.range
 
 local function match(a, b)

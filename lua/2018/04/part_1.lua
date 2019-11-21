@@ -1,11 +1,11 @@
 local yulea = require("yulea")
 
-local array = yulea.iterator.array
+local array = yulea.table.array
 local max = yulea.iterator.max
-local keys = yulea.iterator.keys
+local keys = yulea.table.keys
 local mapValues = yulea.table.mapValues
 local sumValues = yulea.table.sumValues
-local values = yulea.iterator.values
+local values = yulea.table.values
 
 local lines = array(io.lines())
 table.sort(lines)

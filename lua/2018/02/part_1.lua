@@ -1,9 +1,9 @@
 local yulea = require("yulea")
 
-local bytes = yulea.iterator.bytes
+local bytes = yulea.string.bytes
 local distinct = yulea.iterator.distinct
-local multiset = yulea.iterator.multiset
-local values = yulea.iterator.values
+local multiset = yulea.table.multiset
+local values = yulea.table.values
 
 local countCounts = {}
 

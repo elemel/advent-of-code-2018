@@ -1,9 +1,9 @@
 local yulea = require("yulea")
 
-local array = yulea.iterator.array
+local array = yulea.table.array
 local map = yulea.iterator.map
 local mapper = yulea.table.mapper
-local numbers = yulea.iterator.numbers
+local numbers = yulea.io.numbers
 local rep = yulea.iterator.rep
 local sum = yulea.iterator.sum
 local take = yulea.iterator.take

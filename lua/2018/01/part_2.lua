@@ -1,15 +1,8 @@
 local yulea = require("yulea")
 
+local accumulate = yulea.iterator.accumulate
 local cycle = yulea.iterator.cycle
-local map = yulea.iterator.map
+local firstDuplicate = yulea.iterator.firstDuplicate
+local numbers = yulea.io.numbers
 
-local changes = cycle(map(io.lines(), tonumber))
-local frequency = 0
-local seen = {}
-
-repeat
-  seen[frequency] = true
-  frequency = frequency + changes()
-until seen[frequency]
-
-print(frequency)
+print(firstDuplicate(accumulate(cycle(numbers(io.stdin)))))

@@ -1,8 +1,8 @@
 local yulea = require("yulea")
 
-local array = yulea.iterator.array
-local chars = yulea.iterator.chars
-local elements = yulea.iterator.elements
+local array = yulea.table.array
+local chars = yulea.string.chars
+local elements = yulea.table.elements
 local trim = yulea.string.trim
 
 local function reactive(a, b)

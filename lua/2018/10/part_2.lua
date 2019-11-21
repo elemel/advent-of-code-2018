@@ -1,7 +1,7 @@
 local yulea = require("yulea")
 
-local array = yulea.iterator.array
-local elements = yulea.iterator.elements
+local array = yulea.table.array
+local elements = yulea.table.elements
 local map = yulea.iterator.map
 local range = yulea.iterator.range
 local rep = yulea.iterator.rep

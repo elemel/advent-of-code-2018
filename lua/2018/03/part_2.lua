@@ -1,6 +1,6 @@
 local yulea = require("yulea")
 
-local array = yulea.iterator.array
+local array = yulea.table.array
 local map = yulea.iterator.map
 
 local function parseClaim(line)

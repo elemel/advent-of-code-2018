@@ -1,25 +1,16 @@
-local function array(iterator, result)
-  result = result or {}
+local function accumulate(iterator, reducer)
+  reducer = reducer or function(a, b) return a + b end
 
-  for element in iterator do
-    table.insert(result, element)
-  end
-
-  return result
-end
-
-local function bytes(s)
   return coroutine.wrap(function()
-    for i = 1, #s do
-      coroutine.yield(string.byte(s, i))
-    end
-  end)
-end
+    local result = iterator()
 
-local function chars(s)
-  return coroutine.wrap(function()
-    for i = 1, #s do
-      coroutine.yield(string.sub(s, i, i))
+    if result ~= nil then
+      coroutine.yield(result)
+
+      for element in iterator do
+        result = reducer(result, element)
+        coroutine.yield(result)
+      end
     end
   end)
 end
@@ -54,14 +45,6 @@ local function distinct(iterator)
   end)
 end
 
-local function elements(t)
-  return coroutine.wrap(function()
-    for _, e in ipairs(t) do
-      coroutine.yield(e)
-    end
-  end)
-end
-
 local function enumerate(iterator, index)
   index = index or 1
 
@@ -83,12 +66,18 @@ local function filter(iterator, predicate)
   end)
 end
 
-local function keys(t)
-  return coroutine.wrap(function()
-    for k in pairs(t) do
-      coroutine.yield(k)
+local function firstDuplicate(iterator)
+  local seen = {}
+
+  for element in iterator do
+    if seen[element] then
+      return element
     end
-  end)
+
+    seen[element] = true
+  end
+
+  return nil
 end
 
 local function min(iterator, less)
@@ -143,30 +132,6 @@ local function max(iterator, less)
   return result
 end
 
-local function multiset(iterator, result)
-  result = result or {}
-
-  for element in iterator do
-    result[element] = (result[element] or 0) + 1
-  end
-
-  return result
-end
-
-local function numbers(file)
-  return coroutine.wrap(function()
-    while true do
-      local number = file:read("*number")
-
-      if number == nil then
-        break
-      end
-
-      coroutine.yield(number)
-    end
-  end)
-end
-
 local function range(first, last, step)
   first = first or 1
   last = last or math.huge
@@ -207,41 +172,18 @@ local function take(iterator, n)
   end)
 end
 
-local function values(t)
-  return coroutine.wrap(function()
-    for _, v in pairs(t) do
-      coroutine.yield(v)
-    end
-  end)
-end
-
-local function words(s)
-  return coroutine.wrap(function()
-    for w in s:gmatch("%S+") do
-      coroutine.yield(w)
-    end
-  end)
-end
-
 return {
-  array = array,
-  bytes = bytes,
-  chars = chars,
+  accumulate = accumulate,
   cycle = cycle,
   distinct = distinct,
-  elements = elements,
   enumerate = enumerate,
   filter = filter,
-  keys = keys,
+  firstDuplicate = firstDuplicate,
   min = min,
   map = map,
   max = max,
-  multiset = multiset,
-  numbers = numbers,
   range = range,
   rep = rep,
   sum = sum,
   take = take,
-  values = values,
-  words = words,
 }

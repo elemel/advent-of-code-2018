@@ -1,7 +1,6 @@
-local frequency = 0
+local yulea = require("yulea")
 
-for line in io.lines() do
-  frequency = frequency + tonumber(line)
-end
+local numbers = yulea.io.numbers
+local sum = yulea.iterator.sum
 
-print(frequency)
+print(sum(numbers(io.stdin)))

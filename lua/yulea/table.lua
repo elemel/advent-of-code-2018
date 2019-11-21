@@ -1,5 +1,23 @@
+local function array(iterator, result)
+  result = result or {}
+
+  for element in iterator do
+    table.insert(result, element)
+  end
+
+  return result
+end
+
 local function defaultLess(v1, v2)
   return v1 < v2
+end
+
+local function elements(t)
+  return coroutine.wrap(function()
+    for _, e in ipairs(t) do
+      coroutine.yield(e)
+    end
+  end)
 end
 
 local function less(t1, t2, less)
@@ -14,6 +32,14 @@ local function less(t1, t2, less)
   end
 
   return #t1 < #t2
+end
+
+local function keys(t)
+  return coroutine.wrap(function()
+    for k in pairs(t) do
+      coroutine.yield(k)
+    end
+  end)
 end
 
 local function mapper(t)
@@ -42,6 +68,16 @@ local function memoize(f)
   })
 end
 
+local function multiset(iterator, result)
+  result = result or {}
+
+  for element in iterator do
+    result[element] = (result[element] or 0) + 1
+  end
+
+  return result
+end
+
 local function reverse(t)
   local i = 1
   local j = #t
@@ -64,11 +100,24 @@ local function sumValues(t)
   return result
 end
 
+local function values(t)
+  return coroutine.wrap(function()
+    for _, v in pairs(t) do
+      coroutine.yield(v)
+    end
+  end)
+end
+
 return {
+  array = array,
+  elements = elements,
+  keys = keys,
   less = less,
   mapper = mapper,
   mapValues = mapValues,
   memoize = memoize,
+  multiset = multiset,
   reverse = reverse,
   sumValues = sumValues,
+  values = values,
 }
