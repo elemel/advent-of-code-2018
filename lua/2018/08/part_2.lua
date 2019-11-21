@@ -5,7 +5,7 @@ local map = yulea.iterator.map
 local mapper = yulea.table.mapper
 local numbers = yulea.io.numbers
 local rep = yulea.iterator.rep
-local sum = yulea.iterator.sum
+local sum = yulea.math.sum
 local take = yulea.iterator.take
 
 local function value(nums)

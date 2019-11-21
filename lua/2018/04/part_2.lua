@@ -1,7 +1,6 @@
 local yulea = require("yulea")
 
 local array = yulea.table.array
-local max = yulea.iterator.max
 local keys = yulea.table.keys
 local values = yulea.table.values
 

@@ -3,7 +3,7 @@ local yulea = require("yulea")
 local map = yulea.iterator.map
 local numbers = yulea.io.numbers
 local rep = yulea.iterator.rep
-local sum = yulea.iterator.sum
+local sum = yulea.math.sum
 local take = yulea.iterator.take
 
 local function checksum(nums)

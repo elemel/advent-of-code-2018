@@ -4,8 +4,8 @@ local array = yulea.table.array
 local chars = yulea.string.chars
 local elements = yulea.table.elements
 local filter = yulea.iterator.filter
-local min = yulea.iterator.min
 local map = yulea.iterator.map
+local min = yulea.math.min
 local trim = yulea.string.trim
 
 local function reactive(a, b)

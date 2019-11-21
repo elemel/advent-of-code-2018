@@ -4,7 +4,7 @@ local yulea = require("yulea")
 local array = yulea.table.array
 local cycle = yulea.iterator.cycle
 local elements = yulea.table.elements
-local max = yulea.iterator.max
+local max = yulea.math.max
 local range = yulea.iterator.range
 local rep = yulea.iterator.rep
 

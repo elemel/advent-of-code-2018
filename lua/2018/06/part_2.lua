@@ -3,10 +3,10 @@ local yulea = require("yulea")
 local array = yulea.table.array
 local elements = yulea.table.elements
 local keys = yulea.table.keys
-local min = yulea.iterator.min
 local map = yulea.iterator.map
-local max = yulea.iterator.max
-local sum = yulea.iterator.sum
+local max = yulea.math.max
+local min = yulea.math.min
+local sum = yulea.math.sum
 local values = yulea.table.values
 
 local function parseCoordinate(line)

@@ -1,9 +1,9 @@
 local yulea = require("yulea")
 
 local array = yulea.table.array
-local max = yulea.iterator.max
+local max = yulea.math.max
 local keys = yulea.table.keys
-local sum = yulea.iterator.sum
+local sum = yulea.math.sum
 local values = yulea.table.values
 
 local lines = array(io.lines())

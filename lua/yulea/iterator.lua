@@ -1,20 +1,3 @@
-local function accumulate(iterator, reducer)
-  reducer = reducer or function(a, b) return a + b end
-
-  return coroutine.wrap(function()
-    local result = iterator()
-
-    if result ~= nil then
-      coroutine.yield(result)
-
-      for element in iterator do
-        result = reducer(result, element)
-        coroutine.yield(result)
-      end
-    end
-  end)
-end
-
 local function cycle(iterator)
   return coroutine.wrap(function()
     local elements = {}
@@ -80,26 +63,6 @@ local function firstDuplicate(iterator)
   return nil
 end
 
-local function min(iterator, less)
-  local result
-
-  if less then
-    for element in iterator do
-      if result == nil or less(element, result) then
-        result = element
-      end
-    end
-  else
-    for element in iterator do
-      if result == nil or element < result then
-        result = element
-      end
-    end
-  end
-
-  return result
-end
-
 local function map(iterator, mapper)
   return coroutine.wrap(function()
     for element in iterator do
@@ -110,26 +73,6 @@ local function map(iterator, mapper)
       end
     end
   end)
-end
-
-local function max(iterator, less)
-  local result
-
-  if less then
-    for element in iterator do
-      if result == nil or less(result, element) then
-        result = element
-      end
-    end
-  else
-    for element in iterator do
-      if result == nil or result < element then
-        result = element
-      end
-    end
-  end
-
-  return result
 end
 
 local function range(first, last, step)
@@ -154,16 +97,6 @@ local function rep(v, n)
   end)
 end
 
-local function sum(iterator)
-  local result = 0
-
-  for element in iterator do
-    result = result + element
-  end
-
-  return result
-end
-
 local function take(iterator, n)
   return coroutine.wrap(function()
     for i = 1, n do
@@ -173,17 +106,13 @@ local function take(iterator, n)
 end
 
 return {
-  accumulate = accumulate,
   cycle = cycle,
   distinct = distinct,
   enumerate = enumerate,
   filter = filter,
   firstDuplicate = firstDuplicate,
-  min = min,
   map = map,
-  max = max,
   range = range,
   rep = rep,
-  sum = sum,
   take = take,
 }
