@@ -90,16 +90,6 @@ local function reverse(t)
   end
 end
 
-local function sumValues(t)
-  local result = 0
-
-  for _, v in pairs(t) do
-    result = result + v
-  end
-
-  return result
-end
-
 local function values(t)
   return coroutine.wrap(function()
     for _, v in pairs(t) do
@@ -118,6 +108,5 @@ return {
   memoize = memoize,
   multiset = multiset,
   reverse = reverse,
-  sumValues = sumValues,
   values = values,
 }

@@ -3,8 +3,7 @@ local yulea = require("yulea")
 local array = yulea.table.array
 local max = yulea.iterator.max
 local keys = yulea.table.keys
-local mapValues = yulea.table.mapValues
-local sumValues = yulea.table.sumValues
+local sum = yulea.iterator.sum
 local values = yulea.table.values
 
 local lines = array(io.lines())
@@ -34,7 +33,11 @@ for _, line in ipairs(lines) do
   end
 end
 
-local guards_asleep = mapValues(guard_minutes_asleep, sumValues)
+local guards_asleep = {}
+
+for k, v in pairs(guard_minutes_asleep) do
+  guards_asleep[k] = sum(values(v))
+end
 
 local chosen_guard_id = max(keys(guards_asleep), function(a, b)
   return guards_asleep[a] < guards_asleep[b]
