@@ -9,7 +9,7 @@ local function accumulate(iterator)
   end)
 end
 
-local function max(iterator)
+local function maxResult(iterator)
   local result
 
   for element in iterator do
@@ -21,7 +21,7 @@ local function max(iterator)
   return result
 end
 
-local function min(iterator)
+local function minResult(iterator)
   local result
 
   for element in iterator do
@@ -45,7 +45,7 @@ end
 
 return {
   accumulate = accumulate,
-  max = max,
-  min = min,
+  maxResult = maxResult,
+  minResult = minResult,
   sum = sum,
 }

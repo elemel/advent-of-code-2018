@@ -4,7 +4,7 @@ local yulea = require("yulea")
 local array = yulea.table.array
 local cycle = yulea.iterator.cycle
 local elements = yulea.table.elements
-local max = yulea.math.max
+local maxResult = yulea.math.maxResult
 local range = yulea.iterator.range
 local rep = yulea.iterator.rep
 
@@ -34,4 +34,4 @@ for marble in range(1, points) do
   end
 end
 
-print(max(elements(scores)))
+print(maxResult(elements(scores)))

@@ -4,8 +4,8 @@ local array = yulea.table.array
 local elements = yulea.table.elements
 local keys = yulea.table.keys
 local map = yulea.iterator.map
-local max = yulea.math.max
-local min = yulea.math.min
+local maxResult = yulea.math.maxResult
+local minResult = yulea.math.minResult
 local values = yulea.table.values
 
 local function parseCoordinate(line)
@@ -37,11 +37,11 @@ end
 
 local coordinates = array(map(io.lines(), parseCoordinate))
 
-local minX = min(map(elements(coordinates), function(c) return c[1] end))
-local minY = min(map(elements(coordinates), function(c) return c[2] end))
+local minX = minResult(map(elements(coordinates), function(c) return c[1] end))
+local minY = minResult(map(elements(coordinates), function(c) return c[2] end))
 
-local maxX = max(map(elements(coordinates), function(c) return c[1] end))
-local maxY = max(map(elements(coordinates), function(c) return c[2] end))
+local maxX = maxResult(map(elements(coordinates), function(c) return c[1] end))
+local maxY = maxResult(map(elements(coordinates), function(c) return c[2] end))
 
 local sizes = {}
 local infinite = {}
@@ -64,4 +64,4 @@ for i in keys(infinite) do
   sizes[i] = nil
 end
 
-print(max(values(sizes)))
+print(maxResult(values(sizes)))

@@ -5,7 +5,7 @@ local chars = yulea.string.chars
 local elements = yulea.table.elements
 local filter = yulea.iterator.filter
 local map = yulea.iterator.map
-local min = yulea.math.min
+local minResult = yulea.math.minResult
 local trim = yulea.string.trim
 
 local function reactive(a, b)
@@ -34,7 +34,7 @@ end
 
 local polymer = array(chars(trim(io.read("*a"))))
 
-print(min(
+print(minResult(
   map(
     map(
       map(
