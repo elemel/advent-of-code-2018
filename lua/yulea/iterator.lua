@@ -63,14 +63,20 @@ local function firstDuplicate(iterator)
   return nil
 end
 
+local function flatMap(iterator, mapper)
+  return coroutine.wrap(function()
+    for element in iterator do
+      for _, result in ipairs({mapper(element)}) do
+        coroutine.yield(result)
+      end
+    end
+  end)
+end
+
 local function map(iterator, mapper)
   return coroutine.wrap(function()
     for element in iterator do
-      local result = mapper(element)
-
-      if result ~= nil then
-        coroutine.yield(result)
-      end
+      coroutine.yield(mapper(element))
     end
   end)
 end
@@ -85,6 +91,18 @@ local function range(first, last, step)
       coroutine.yield(i)
     end
   end)
+end
+
+local function reduce(iterator, reducer)
+  local result = iterator()
+
+  if result ~= nil then
+    for element in iterator do
+      result = reducer(result, element)
+    end
+  end
+
+  return result
 end
 
 local function rep(v, n)
@@ -111,8 +129,10 @@ return {
   enumerate = enumerate,
   filter = filter,
   firstDuplicate = firstDuplicate,
+  flatMap = flatMap,
   map = map,
   range = range,
+  reduce = reduce,
   rep = rep,
   take = take,
 }

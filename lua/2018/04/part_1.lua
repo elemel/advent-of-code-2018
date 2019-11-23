@@ -1,52 +1,52 @@
 local yulea = require("yulea")
 
 local array = yulea.table.array
-local max = yulea.math.max
 local keys = yulea.table.keys
+local reduce = yulea.iterator.reduce
 local sum = yulea.math.sum
 local values = yulea.table.values
 
 local lines = array(io.lines())
 table.sort(lines)
 
-local guard_id
-local asleep_since
-local guard_minutes_asleep = {}
-local minutes_asleep
+local guardId
+local asleepSince
+local guardMinutesAsleep = {}
+local minutesAsleep
 
 for _, line in ipairs(lines) do
-  local minute_str, observation =
+  local minuteStr, observation =
     string.match(line, "^%[%d%d%d%d%-%d%d%-%d%d %d%d:(%d%d)] (.+)$")
 
-  local minute = tonumber(minute_str)
+  local minute = tonumber(minuteStr)
 
   if observation == "falls asleep" then
-    asleep_since = minute
+    asleepSince = minute
   elseif observation == "wakes up" then
-    for i = asleep_since, minute - 1 do
-      minutes_asleep[i] = (minutes_asleep[i] or 0) + 1
+    for i = asleepSince, minute - 1 do
+      minutesAsleep[i] = (minutesAsleep[i] or 0) + 1
     end
   else
-    guard_id = tonumber(string.match(observation, "^Guard #(%d+) begins shift"))
-    guard_minutes_asleep[guard_id] = guard_minutes_asleep[guard_id] or {}
-    minutes_asleep = guard_minutes_asleep[guard_id]
+    guardId = tonumber(string.match(observation, "^Guard #(%d+) begins shift"))
+    guardMinutesAsleep[guardId] = guardMinutesAsleep[guardId] or {}
+    minutesAsleep = guardMinutesAsleep[guardId]
   end
 end
 
-local guards_asleep = {}
+local guardsAsleep = {}
 
-for k, v in pairs(guard_minutes_asleep) do
-  guards_asleep[k] = sum(values(v))
+for k, v in pairs(guardMinutesAsleep) do
+  guardsAsleep[k] = sum(values(v))
 end
 
-local chosen_guard_id = max(keys(guards_asleep), function(a, b)
-  return guards_asleep[a] < guards_asleep[b]
+local chosenGuardId = reduce(keys(guardsAsleep), function(a, b)
+  return guardsAsleep[a] < guardsAsleep[b] and b or a
 end)
 
-minutes_asleep = guard_minutes_asleep[chosen_guard_id]
+minutesAsleep = guardMinutesAsleep[chosenGuardId]
 
-local chosen_minute = max(keys(minutes_asleep), function(a, b)
-  return minutes_asleep[a] < minutes_asleep[b]
+local chosenMinute = reduce(keys(minutesAsleep), function(a, b)
+  return minutesAsleep[a] < minutesAsleep[b] and b or a
 end)
 
-print(chosen_guard_id * chosen_minute)
+print(chosenGuardId * chosenMinute)

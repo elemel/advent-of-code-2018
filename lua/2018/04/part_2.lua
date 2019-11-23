@@ -7,42 +7,42 @@ local values = yulea.table.values
 local lines = array(io.lines())
 table.sort(lines)
 
-local guard_id
-local asleep_since
-local guard_minutes_asleep = {}
-local minutes_asleep
+local guardId
+local asleepSince
+local guardMinutesAsleep = {}
+local minutesAsleep
 
 for _, line in ipairs(lines) do
-  local minute_str, observation =
+  local minuteStr, observation =
     string.match(line, "^%[%d%d%d%d%-%d%d%-%d%d %d%d:(%d%d)] (.+)$")
 
-  local minute = tonumber(minute_str)
+  local minute = tonumber(minuteStr)
 
   if observation == "falls asleep" then
-    asleep_since = minute
+    asleepSince = minute
   elseif observation == "wakes up" then
-    for i = asleep_since, minute - 1 do
-      minutes_asleep[i] = (minutes_asleep[i] or 0) + 1
+    for i = asleepSince, minute - 1 do
+      minutesAsleep[i] = (minutesAsleep[i] or 0) + 1
     end
   else
-    guard_id = tonumber(string.match(observation, "^Guard #(%d+) begins shift"))
-    guard_minutes_asleep[guard_id] = guard_minutes_asleep[guard_id] or {}
-    minutes_asleep = guard_minutes_asleep[guard_id]
+    guardId = tonumber(string.match(observation, "^Guard #(%d+) begins shift"))
+    guardMinutesAsleep[guardId] = guardMinutesAsleep[guardId] or {}
+    minutesAsleep = guardMinutesAsleep[guardId]
   end
 end
 
-local chosen_guard_id
-local chosen_minute
-local max_count = -math.huge
+local chosenGuardId
+local chosenMinute
+local maxCount = -math.huge
 
-for guard_id, minutes_asleep in pairs(guard_minutes_asleep) do
-  for minute, count in pairs(minutes_asleep) do
-    if count > max_count then
-      chosen_guard_id = guard_id
-      chosen_minute = minute
-      max_count = count
+for guardId, minutesAsleep in pairs(guardMinutesAsleep) do
+  for minute, count in pairs(minutesAsleep) do
+    if count > maxCount then
+      chosenGuardId = guardId
+      chosenMinute = minute
+      maxCount = count
     end
   end
 end
 
-print(chosen_guard_id * chosen_minute)
+print(chosenGuardId * chosenMinute)

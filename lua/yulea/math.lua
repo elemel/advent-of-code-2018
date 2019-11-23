@@ -9,40 +9,24 @@ local function accumulate(iterator)
   end)
 end
 
-local function max(iterator, less)
+local function max(iterator)
   local result
 
-  if less then
-    for element in iterator do
-      if result == nil or less(result, element) then
-        result = element
-      end
-    end
-  else
-    for element in iterator do
-      if result == nil or result < element then
-        result = element
-      end
+  for element in iterator do
+    if result == nil or result < element then
+      result = element
     end
   end
 
   return result
 end
 
-local function min(iterator, less)
+local function min(iterator)
   local result
 
-  if less then
-    for element in iterator do
-      if result == nil or less(element, result) then
-        result = element
-      end
-    end
-  else
-    for element in iterator do
-      if result == nil or element < result then
-        result = element
-      end
+  for element in iterator do
+    if result == nil or element < result then
+      result = element
     end
   end
 
