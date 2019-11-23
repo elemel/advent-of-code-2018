@@ -20,6 +20,12 @@ local function elements(t)
   end)
 end
 
+local function indexer(t)
+  return function(k)
+    return t[k]
+  end
+end
+
 local function less(t1, t2, less)
   less = less or defaultLess
 
@@ -40,12 +46,6 @@ local function keys(t)
       coroutine.yield(k)
     end
   end)
-end
-
-local function mapper(t)
-  return function(k)
-    return t[k]
-  end
 end
 
 local function mapValues(t, mapper, result)
@@ -101,9 +101,9 @@ end
 return {
   array = array,
   elements = elements,
+  indexer = indexer,
   keys = keys,
   less = less,
-  mapper = mapper,
   mapValues = mapValues,
   memoize = memoize,
   multiset = multiset,
