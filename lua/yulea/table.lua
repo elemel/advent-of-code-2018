@@ -8,10 +8,6 @@ local function array(iterator, result)
   return result
 end
 
-local function defaultLess(v1, v2)
-  return v1 < v2
-end
-
 local function elements(t)
   return coroutine.wrap(function()
     for _, e in ipairs(t) do
@@ -26,13 +22,13 @@ local function indexer(t)
   end
 end
 
-local function less(t1, t2, less)
-  less = less or defaultLess
+local function compare(t1, t2, compareElement)
+  compareElement = compareElement or function(v1, v2) return v1 < v2 end
 
   for i = 1, math.min(#t1, #t2) do
-    if less(t1[i], t2[i]) then
+    if compareElement(t1[i], t2[i]) then
       return true
-    elseif less(t2[i], t1[i]) then
+    elseif compareElement(t2[i], t1[i]) then
       return false
     end
   end
@@ -100,10 +96,10 @@ end
 
 return {
   array = array,
+  compare = compare,
   elements = elements,
   indexer = indexer,
   keys = keys,
-  less = less,
   mapValues = mapValues,
   memoize = memoize,
   multiset = multiset,

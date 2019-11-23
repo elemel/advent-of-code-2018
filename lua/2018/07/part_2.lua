@@ -2,11 +2,11 @@ local heap = require("skew_heap")
 local yulea = require("yulea")
 
 local array = yulea.table.array
+local compare = yulea.table.compare
 local elements = yulea.table.elements
 local keys = yulea.table.keys
 local map = yulea.iterator.map
 local memoize = yulea.table.memoize
-local tableLess = yulea.table.less
 
 local function parseRequirement(line)
   return {string.match(
@@ -39,7 +39,7 @@ end
 
 local time = 0
 local idle = 5
-local inProgress = heap:new(tableLess)
+local inProgress = heap:new(compare)
 local completed = {}
 
 while not available:empty() or not inProgress:empty() do
