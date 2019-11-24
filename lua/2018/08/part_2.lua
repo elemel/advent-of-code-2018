@@ -1,8 +1,9 @@
 local yulea = require("yulea")
 
 local array = yulea.table.array
+local bind = yulea.functional.bind
 local flatMap = yulea.iterator.flatMap
-local indexer = yulea.table.indexer
+local index = yulea.functional.index
 local map = yulea.iterator.map
 local numbers = yulea.io.numbers
 local rep = yulea.iterator.rep
@@ -18,7 +19,7 @@ local function value(nums)
   end
 
   local childValues = array(map(rep(nums, childCount), value))
-  return sum(flatMap(take(nums, metadataCount), indexer(childValues)))
+  return sum(flatMap(take(nums, metadataCount), bind(index, childValues)))
 end
 
 print(value(numbers(io.stdin)))

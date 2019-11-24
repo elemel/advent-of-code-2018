@@ -1,7 +1,9 @@
 local yulea = require("yulea")
 
 local array = yulea.table.array
+local bind = yulea.functional.bind
 local elements = yulea.table.elements
+local index = yulea.functional.index
 local keys = yulea.table.keys
 local map = yulea.iterator.map
 local maxResult = yulea.math.maxResult
@@ -37,11 +39,11 @@ end
 
 local coordinates = array(map(io.lines(), parseCoordinate))
 
-local minX = minResult(map(elements(coordinates), function(c) return c[1] end))
-local minY = minResult(map(elements(coordinates), function(c) return c[2] end))
+local minX = minResult(map(elements(coordinates), bind(index, nil, 1)))
+local minY = minResult(map(elements(coordinates), bind(index, nil, 2)))
 
-local maxX = maxResult(map(elements(coordinates), function(c) return c[1] end))
-local maxY = maxResult(map(elements(coordinates), function(c) return c[2] end))
+local maxX = maxResult(map(elements(coordinates), bind(index, nil, 1)))
+local maxY = maxResult(map(elements(coordinates), bind(index, nil, 2)))
 
 local sizes = {}
 local infinite = {}

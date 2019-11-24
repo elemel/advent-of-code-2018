@@ -16,12 +16,6 @@ local function elements(t)
   end)
 end
 
-local function indexer(t)
-  return function(k)
-    return t[k]
-  end
-end
-
 local function compare(t1, t2, compareElement)
   compareElement = compareElement or function(v1, v2) return v1 < v2 end
 
@@ -98,7 +92,6 @@ return {
   array = array,
   compare = compare,
   elements = elements,
-  indexer = indexer,
   keys = keys,
   mapValues = mapValues,
   memoize = memoize,

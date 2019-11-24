@@ -1,9 +1,11 @@
 local yulea = require("yulea")
 
 local array = yulea.table.array
+local bind = yulea.functional.bind
 local chars = yulea.string.chars
 local elements = yulea.table.elements
 local filter = yulea.iterator.filter
+local len = yulea.functional.len
 local map = yulea.iterator.map
 local minResult = yulea.math.minResult
 local trim = yulea.string.trim
@@ -39,6 +41,6 @@ print(minResult(
     map(
       map(
         chars("abcdefghijklmnopqrstuvwxyz"),
-        function(unit) return removeUnit(polymer, unit) end),
+        bind(removeUnit, polymer)),
       react),
-    function(polymer) return #polymer end)))
+    len)))

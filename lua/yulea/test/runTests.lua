@@ -17,6 +17,7 @@ local function sortedPairs(t)
 end
 
 local testSuites = {
+  functionalTest = require("yulea.test.functionalTest"),
   iteratorTest = require("yulea.test.iteratorTest"),
   mathTest = require("yulea.test.mathTest"),
   stringTest = require("yulea.test.stringTest"),
@@ -26,6 +27,8 @@ local testSuites = {
 for testSuiteName, testCases in sortedPairs(testSuites) do
   for testCaseName, testCase in sortedPairs(testCases) do
     local testName = testSuiteName .. "." .. testCaseName
+
+    testCase()
 
     if pcall(testCase) then
       print(ansicolors("%{green}" .. testName .. ": PASS"))
