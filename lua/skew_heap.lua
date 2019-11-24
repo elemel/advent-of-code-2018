@@ -1,4 +1,4 @@
--- Copied from: https://raw.githubusercontent.com/geoffleyland/lua-heaps/master/lua/skew_heap.lua
+-- Copied from: https://github.com/geoffleyland/lua-heaps/blob/master/lua/skew_heap.lua
 
 -- Copyright (c) 2008-2011 Incremental IP Limited.
 

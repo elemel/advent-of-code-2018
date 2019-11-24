@@ -1,4 +1,4 @@
--- Copied from: https://raw.githubusercontent.com/kikito/ansicolors.lua/master/ansicolors.lua
+-- Copied from: https://github.com/kikito/ansicolors.lua/blob/master/ansicolors.lua
 
 -- ansicolors.lua v1.0.2 (2012-08)
 
