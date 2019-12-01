@@ -1,5 +1,5 @@
 # advent-of-code
 
-My Advent of Code solutions.
+My Python solutions to Advent of Code.
 
 See: https://adventofcode.com/
